@@ -1,15 +1,18 @@
 <template>
   <div id="app">
+    <vue-headful :title="config.header" />
     <div v-if="wallet">
       <b-navbar>
           <template slot="brand">
             <b-navbar-item v-on:click="navigate('home')">
-              <img src="/logo.png" />
+              <img :src="'/' + config.logo" />
+              <img :src="'/' + config.lettering" style="height:12px; margin-left: 10px;" />
             </b-navbar-item>
           </template>
           <template slot="start">
             <b-navbar-item v-on:click="navigate('users')">Gestione utenti</b-navbar-item>
             <b-navbar-item v-on:click="navigate('history')">Storico transazioni</b-navbar-item>
+            <b-navbar-item v-on:click="navigate('refund')">Gestione rimborsi</b-navbar-item>
             <b-navbar-item v-on:click="navigate('settings')">Impostazioni</b-navbar-item>
           </template>
 
@@ -27,12 +30,12 @@
         <users v-if="route==='users'" />
         <history v-if="route==='history'" />
         <settings v-if="route==='settings'" />
+        <refund v-if="route==='refund'" />
     </div>
     <div class="container" v-if="!wallet">
       <div class="text-center" style="margin-top:10vh">
-        <img src="/planum.png" width="15%" /><br><br>
-        <h1>Effettua il login con un account<br>proprietario di una sidechain Planum</h1><br>
-        <p>Per poter amministrare una sidechain devi collegarti come proprietario</p>
+        <img :src="'/' + config.completo" width="15%" /><br><br>
+        <h1>Effettua il login con l'account proprietario.</h1><br>
         <b-upload v-model="file" v-on:input="loadWalletFromFile" v-if="!isLogging" drag-drop>
           <section class="section">
             <div class="content has-text-centered">
@@ -47,11 +50,11 @@
     </div>
     <div class="text-center">
       <hr>
-      <br />Scrypta Planum Admin is an<br>
+      <br />SocialPay è un progetto
       <a
-        href="https://github.com/scryptachain/scrypta-planum-admin"
+        href="https://github.com/scryptachain/socialpay"
         target="_blank"
-      >open-source</a> project by
+      >open-source</a><br>donato alla comunità dalla
       <a href="https://scrypta.foundation" target="_blank">Scrypta Foundation</a>.
       <br />
       <br />
@@ -61,6 +64,7 @@
 
 <script>
 let ScryptaCore = require("@scrypta/core")
+let config = require('./config.json')
 
 export default {
   data() {
@@ -70,13 +74,9 @@ export default {
       wallet: "",
       route: 'home',
       isLogging: false,
-      showScanModal: false,
       file: [],
       isCreating: false,
-      isUpdating: false,
-      showCreateModal: false,
-      password: "",
-      passwordrepeat: ""
+      config: config
     };
   },
   async mounted() {
@@ -114,24 +114,18 @@ export default {
           onConfirm: async password => {
             let key = await app.scrypta.readKey(password, dataKey);
             if (key !== false) {
-              let isOwner = false
               let exp = dataKey.split(':')
               let address = exp[0]
-              let sidechains = await app.scrypta.get('/sidechain/list')
-              for(let x in sidechains.data){
-                let sidechain = sidechains.data[x]
-                if(sidechain.genesis.owner === address){
-                  isOwner = true
-                }
-              }
-              if(isOwner){
+              let sidechain = await app.scrypta.post('/sidechain/get', { sidechain_address: app.config.sidechain })
+              
+              if(sidechain.sidechain[0].data.genesis.owner === address){
                 app.scrypta.importPrivateKey(key.prv, password);
                 localStorage.setItem("SID", dataKey);
                 location.reload();
               }else{
                 app.isLogging = false
                 app.$buefy.toast.open({
-                  message: "Sembra che tu non sia proprietario di nessuna blockchain!",
+                  message: "Sembra che tu non sia proprietario di questa sidechain!",
                   type: "is-danger"
                 });
               }

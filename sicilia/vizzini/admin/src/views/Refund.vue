@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="container">
-      <h1>Storico transazioni</h1>
+      <h1>Gestione rimborsi</h1>
       <hr>
       <div class="columns">
         <div class="column">

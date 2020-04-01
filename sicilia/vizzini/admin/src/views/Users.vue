@@ -1,11 +1,8 @@
 <template>
   <div class="main">
     <div class="container">
-      <div v-if="user.chain !== '-' && user.owner[user.chain] !== undefined">
-        <h1>Gestione utenti</h1>
-        <h3>{{ user.owner[user.chain].genesis.name }} ({{ user.owner[user.chain].genesis.symbol }})</h3>
-        <hr>
-      </div>
+      <h1>Gestione utenti</h1>
+      <hr>
       <div class="columns">
         <div class="column">
           <b-tabs :animated="false">
@@ -32,7 +29,7 @@
                         {{ props.row.id }}
                     </b-table-column>
 
-                    <b-table-column field="filter" label="Filtro" width="40" sortable searchable>
+                    <b-table-column field="filter" label="Tipologia" width="40" sortable searchable>
                         {{ props.row.filter }}
                     </b-table-column>
 
@@ -48,7 +45,11 @@
                         {{ props.row.identifier }}
                     </b-table-column>
 
-                    <b-table-column label="Azioni" sortable>
+                    <b-table-column field="user.identifier" label="C. nuc. fam." searchable sortable>
+                        {{ props.row.nucleo }}
+                    </b-table-column>
+
+                    <b-table-column width="130" label="Azioni" sortable>
                       <b-button type="is-primary" v-on:click="editUser(props.row)" size="is-small">
                         <b-icon
                             pack="fas"
@@ -80,9 +81,9 @@
                 Da questa sezione puoi caricare il file .csv di origine per inserire gli utenti dentro il pannello di amministrazione.<br>
                 Dopo aver caricato il file tutti gli utenti verranno aggiunti al gestionale, se dovessero esserci doppioni questi verranno ignorati.<br><br>
                 Il file .csv dovrà essere così composto:<br>
-                <pre>SERIALE | WALLET | FILTRO | NOME | IDENTIFICATIVO</pre>
+                <pre>SERIALE | WALLET | FILTRO | NOME | IDENTIFICATIVO | COMPONENTI NUCLEO FAMILIARE</pre>
                 <br>
-                I campi NOME, FILTRO e IDENTIFICATIVO sono facoltativi, si prega di <span style="color:#f00">non inserire il campo con la password</span>.<br><br>
+                I campi NOME, FILTRO, COMPONENTI NUCLEO FAMILIARE e IDENTIFICATIVO sono facoltativi, si prega di <span style="color:#f00">non inserire il campo con la password</span>.<br><br>
               </p>
               <b-upload v-model="file" v-on:input="loadCsvFromFile" v-if="!isImporting" drag-drop>
                 <section class="section">
@@ -176,6 +177,11 @@ export default {
                 doc.identifier = row[4]
               }else{
                 doc.identifier = ''
+              }
+              if(row[5] !== undefined){
+                doc.nucleo = row[5]
+              }else{
+                doc.nucleo = ''
               }
               let exp = row[1].split(':')
               doc.address = exp[0]

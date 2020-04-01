@@ -29,6 +29,13 @@
                   required>
               </b-input>
           </b-field>
+          <b-field label="Componenti nucleo familiare">
+              <b-input
+                  type="text"
+                  v-model="user.nucleo"
+                  required>
+              </b-input>
+          </b-field>
         </section>
         <footer class="modal-card-foot">
           <button class="button is-primary" v-on:click="saveUser" style="width:100%">Salva utente</button>
@@ -47,13 +54,14 @@
     data() {
       return {
         db: new ScryptaDB(true, ['users', 'settings']),
-        scrypta: new ScryptaCore(true)
+        scrypta: new ScryptaCore(true),
+        option: ["CITTADINO", "ESERCENTE", "FARMACIA"]
       }
     },
     methods: {
       async saveUser(){
         const app = this
-        await app.db.update('users','address',app.user.address,app.user)
+        await app.db.update('users','address', app.user.address,app.user)
         app.$buefy.toast.open({
           message: "Utente aggiornato correttamente.",
           type: "is-success"
