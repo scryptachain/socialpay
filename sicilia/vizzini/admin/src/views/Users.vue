@@ -81,9 +81,9 @@
                 Da questa sezione puoi caricare il file .csv di origine per inserire gli utenti dentro il pannello di amministrazione.<br>
                 Dopo aver caricato il file tutti gli utenti verranno aggiunti al gestionale, se dovessero esserci doppioni questi verranno ignorati.<br><br>
                 Il file .csv dovrà essere così composto:<br>
-                <pre>SERIALE | WALLET | FILTRO | NOME | IDENTIFICATIVO | COMPONENTI NUCLEO FAMILIARE</pre>
+                <pre>SERIALE | WALLET | TIPOLOGIA | NOME | IDENTIFICATIVO | COMPONENTI NUCLEO FAMILIARE</pre>
                 <br>
-                I campi NOME, FILTRO, COMPONENTI NUCLEO FAMILIARE e IDENTIFICATIVO sono facoltativi, si prega di <span style="color:#f00">non inserire il campo con la password</span>.<br><br>
+                I campi NOME, TIPOLOGIA, COMPONENTI NUCLEO FAMILIARE e IDENTIFICATIVO sono facoltativi, si prega di <span style="color:#f00">non inserire il campo con la password</span>.<br><br>
               </p>
               <b-upload v-model="file" v-on:input="loadCsvFromFile" v-if="!isImporting" drag-drop>
                 <section class="section">

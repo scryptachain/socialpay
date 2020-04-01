@@ -152,17 +152,16 @@ export default {
         if(app.parsedUsers[to] !== undefined && app.parsedUsers[to] !== to){
           to = app.parsedUsers[to]
         }
-        if(to === app.user.chain){
-          to = 'BURNED TOKEN'
+        if(to !== app.user.chain){
+          let transaction = {
+            sxid: response.data[x].sxid,
+            amount: value,
+            from: from,
+            to: to,
+            block: block
+          };
+          transactions.push(transaction);
         }
-        let transaction = {
-          sxid: response.data[x].sxid,
-          amount: value,
-          from: from,
-          to: to,
-          block: block
-        };
-        transactions.push(transaction);
       }
     }
     app.transactions = transactions;

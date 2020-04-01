@@ -11,10 +11,12 @@
           <div class="columns">
             <div class="column">
               <h1>Nome: <span style="font-weight:normal">{{ user.name }}</span></h1>
-              <h1>Filtro: <span style="font-weight:normal">{{ user.filter }}</span></h1>
+              <h1>Tipologia: <span style="font-weight:normal">{{ user.filter }}</span></h1>
               <h1>Identificativo: <span style="font-weight:normal">{{ user.identifier }}</span></h1>
-              <h1>Bilancio asset: <span style="font-weight:normal">{{ assetBalance }} {{ owner.owner[owner.chain].genesis.symbol }}</span></h1>
+              <h1>Componenti nucleo familiare: <span style="font-weight:normal">{{ user.nucleo }}</span></h1>
+              <h1>Bilancio {{ owner.owner[owner.chain].genesis.symbol }}: <span style="font-weight:normal">{{ assetBalance }} {{ owner.owner[owner.chain].genesis.symbol }}</span></h1>
               <h1>Bilancio Lyra: <span style="font-weight:normal">{{ lyraBalance }} LYRA</span></h1>
+              <h1 v-if="totRimborsi > 0">Totale rimborsi: <span style="font-weight:normal">{{ totRimborsi }} EUR</span></h1>
             </div>
             <div class="column">
               <h1>Invia fondi all'utente</h1>
@@ -95,6 +97,11 @@
                 </b-table-column>
             </template>
           </b-table>
+
+          <div v-if="refunds.length > 0">
+            <h1>Storico rimborsi</h1>
+            <b-table :data="refunds" :columns="columns"></b-table>
+          </div>
           <p v-if="transactions.length === 0">Questo utente non ha ancora transazioni.</p>
         </section>
     </div>
@@ -105,6 +112,8 @@
   let ScryptaCore = require("@scrypta/core")
   import ScryptaDB from '../libs/db.js'
   import User from '../libs/user.js'
+  let config = require('../config.json')
+  var LZUTF8 = require('lzutf8')
 
   export default {
     name: 'UserForm',
@@ -117,8 +126,28 @@
         lyraBalance: 0,
         amountLyra: 0,
         amountAsset: 0,
+        totRimborsi: 0,
         transactions: [],
+        refunds: [],
         users: [],
+        columns: [
+            {
+                field: 'txid',
+                label: 'Rif.',
+            },
+            {
+                field: 'data',
+                label: 'Data',
+            },
+            {
+                field: 'importo',
+                label: 'Importo',
+            },
+            {
+                field: 'note',
+                label: 'Note'
+            }
+        ],
         parsedUsers: [],
         isPaginated: true,
         isPaginationSimple: false,
@@ -127,6 +156,7 @@
         sortIcon: 'arrow-up',
         sortIconSize: 'is-small',
         currentPage: 1,
+        config: config,
         perPage: 15,
         owner: {
           owner: {
@@ -163,6 +193,7 @@
           app.parsedUsers[uu.address] = uu.address 
         }
       }
+      let refundrequests = {}
       let transactions = await app.scrypta.post('/sidechain/transactions', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
       app.transactions = transactions.transactions
       for(let x in app.transactions){
@@ -173,7 +204,36 @@
           app.transactions[x].to = app.parsedUsers[app.transactions[x].to]
         }
         if(app.transactions[x].to === app.owner.chain){
-          app.transactions[x].to = 'BURNED TOKEN'
+          app.transactions[x].to = 'RICHIESTA RIMBORSO'
+        }
+        refundrequests[app.transactions[x].sxid] = app.transactions[x].amount
+      }
+
+      let received = await app.scrypta.post('/received', { address: app.user.address })
+      for(let x in received.data){
+        let tx = received.data[x]
+        let data = tx.data.split(':')
+        if(data[0] === 'REFUND'){
+          let rimborso = tx
+          let transactions = await app.scrypta.get('/transactions/' + app.owner.identity.address)
+          for(let y in transactions.data){
+            let txx = transactions.data[y]
+            if(txx.txid === tx.txid){
+              var date = new Date(txx.time * 1000)
+              var year = date.getFullYear()
+              var month = date.getMonth() + 1
+              var day = date.getDate()
+              var hours = date.getHours()
+              var minutes = "0" + date.getMinutes()
+              var formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
+              rimborso.data = formattedTime
+              rimborso.note = LZUTF8.decompress(data[2], { inputEncoding: 'Base64' })
+              rimborso.importo = refundrequests[data[1]] * -1 
+              app.totRimborsi += rimborso.importo
+              rimborso.importo = rimborso.importo + " EUR"
+              app.refunds.push(rimborso)
+            }
+          }
         }
       }
     },
@@ -263,7 +323,7 @@
                     yy++
                   }
                   if(valid){
-                    app.amountLyra = 0
+                    app.amountAsset = 0
                     app.$buefy.toast.open({
                       message: "Asset inviati correttamente",
                       type: "is-success"

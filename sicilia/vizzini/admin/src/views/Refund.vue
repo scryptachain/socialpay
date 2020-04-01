@@ -43,13 +43,25 @@
                 <b-table-column label="Blocco" sortable>
                     {{ props.row.block }}
                 </b-table-column>
+                
+                <b-table-column width="90" style="text-align: center" label="Rimborsato" sortable>
+                  <span v-if="contabilizzati.indexOf(props.row.sxid) === -1">NO</span>
+                  <span v-if="contabilizzati.indexOf(props.row.sxid) !== -1">SI</span>
+                </b-table-column>
+
+                <b-table-column width="40" style="text-align:center" label="Azioni" sortable>
+                  <b-button type="is-primary" v-on:click="editRefund(props.row)" size="is-small">
+                    <b-icon
+                        pack="fas"
+                        icon="pen">
+                    </b-icon>
+                  </b-button>
+                </b-table-column>
             </template>
           </b-table>
-          <p v-if="transactions.length === 0">Non ci sono ancora transazioni.</p>
-          <vue-csv-downloader
-            :data="transactions"
-            :fields="fields"
-          > 
+
+          <p v-if="transactions.length === 0">Non ci sono ancora richieste di rimborso.</p>
+          <vue-csv-downloader :data="transactions" :fields="fields"> 
             <b-button v-if="transactions.length > 0" type="is-primary" style="float:left; margin-top:-60px;" size="is-normal">SCARICA BACKUP</b-button>
           </vue-csv-downloader>
         </div>
@@ -63,6 +75,7 @@ let ScryptaCore = require("@scrypta/core")
 import User from '../libs/user.js'
 import ScryptaDB from '../libs/db.js'
 import VueCsvDownloader from 'vue-csv-downloader';
+import RefundDetails from '../components/RefundDetails.vue'
 
 export default {
   components: {
@@ -73,6 +86,8 @@ export default {
       db: new ScryptaDB(true, ['users', 'settings']),
       scrypta: new ScryptaCore(true),
       users: [],
+      esercenti: [],
+      contabilizzati: [],
       parsedUsers: {},
       isPaginated: true,
       isPaginationSimple: false,
@@ -108,10 +123,8 @@ export default {
     app.parsedUsers[app.user.identity.address] = 'AMMINISTRATORE'
     for(let x in app.users){
       let uu = app.users[x]
-      if(uu.name !== ''){
+      if(uu.name !== '' && uu.filter === 'ESERCENTE'){
         app.parsedUsers[uu.address] = uu.name 
-      }else{
-        app.parsedUsers[uu.address] = uu.address 
       }
     }
     let response = await app.scrypta.post('/sidechain/scan', { sidechain_address: app.user.chain })
@@ -132,12 +145,14 @@ export default {
         }
       }
       let from = "";
+      let address
       if (response.data[x].transaction["inputs"][0]['vout'] === 'genesis') {
         from = 'GENESIS'
       }else if(response.data[x].transaction["inputs"][0]['vout'] === 'reissue') {
         from = 'REISSUE'
       }else{
         from = response.data[x]["address"]
+        address = from
       }
       if(from !== undefined){
         let block
@@ -146,26 +161,47 @@ export default {
         }else{
           block = 'unconfirmed'
         }
-        if(app.parsedUsers[from] !== undefined && app.parsedUsers[from] !== from){
+        if(to === app.user.chain && from !== 'AMMINISTRATORE' && app.parsedUsers[from] !== undefined && from !== app.user.identity.address){
+          to = 'RICHIESTA DI RIMBORSO'
           from = app.parsedUsers[from]
+          if(app.esercenti.indexOf(address) === -1){
+            app.esercenti.push(address)
+          }
+          let transaction = {
+            sxid: response.data[x].sxid,
+            amount: value,
+            from: from,
+            to: to,
+            address: address,
+            block: block
+          }
+          transactions.push(transaction)
         }
-        if(app.parsedUsers[to] !== undefined && app.parsedUsers[to] !== to){
-          to = app.parsedUsers[to]
-        }
-        if(to === app.user.chain){
-          to = 'BURNED TOKEN'
-        }
-        let transaction = {
-          sxid: response.data[x].sxid,
-          amount: value,
-          from: from,
-          to: to,
-          block: block
-        };
-        transactions.push(transaction);
       }
     }
     app.transactions = transactions;
+    for(let x in app.esercenti){
+      let esercente = app.esercenti[x]
+      let received = await app.scrypta.post('/received', { address: esercente })
+      for(let x in received.data){
+        let tx = received.data[x]
+        let data = tx.data.split(':')
+        if(data[0] === 'REFUND'){
+          app.contabilizzati.push(data[1])
+        }
+      }
+    }
+  },
+  methods: {
+    async editRefund(refund){
+      this.$buefy.modal.open({
+          parent: this,
+          component: RefundDetails,
+          hasModalCard: true,
+          trapFocus: false,
+          props: {refund: refund}
+      })
+    }
   }
 };
 </script>

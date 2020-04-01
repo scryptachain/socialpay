@@ -15,12 +15,15 @@
                   required>
               </b-input>
           </b-field>
-          <b-field label="Filtro">
-              <b-input
-                  type="text"
-                  v-model="user.filter"
-                  required>
-              </b-input>
+          <b-field label="Tipologia">
+            <b-select placeholder="Tipologia" v-model="user.filter" required>
+                <option
+                    v-for="option in tipologie"
+                    :value="option"
+                    :key="option">
+                    {{ option }}
+                </option>
+            </b-select>
           </b-field>
           <b-field label="Identificativo">
               <b-input
@@ -55,7 +58,7 @@
       return {
         db: new ScryptaDB(true, ['users', 'settings']),
         scrypta: new ScryptaCore(true),
-        option: ["CITTADINO", "ESERCENTE", "FARMACIA"]
+        tipologie: ["CITTADINO", "ESERCENTE", "FARMACIA"]
       }
     },
     methods: {

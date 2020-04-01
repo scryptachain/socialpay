@@ -3,7 +3,7 @@
     <div class="container">
       <h1>Impostazioni</h1>
       <hr>
-      <h4 class="title is-4">Effettua backup archivio</h4>
+      <h4 class="title is-4">Effettua backup archivio utenti</h4>
       <p>
         Questo backup ti servirà per importare in un momento successivo l'intero archivio.<br>
         <span style="color:#f00">Attenzione, effettuate regolarmente il backup così da evitare la perdita di dati.</span>
