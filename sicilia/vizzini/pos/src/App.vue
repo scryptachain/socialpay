@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <vue-headful :title="config.header" />
     <div v-if="!isLogging && wallet">
       <b-navbar>
         <template slot="brand">
@@ -102,7 +103,7 @@ export default {
       var dataKey = decodedString
 
       app.$buefy.dialog.prompt({
-        message: `Enter wallet password`,
+        message: `Inserisci pin card`,
         inputAttrs: {
           type: "password"
         },
@@ -115,7 +116,7 @@ export default {
             location.reload();
           } else {
             app.$buefy.toast.open({
-              message: "Wrong password!",
+              message: "Pin errato!",
               type: "is-danger"
             });
           }

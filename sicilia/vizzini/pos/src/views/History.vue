@@ -1,7 +1,10 @@
 <template>
   <div class="settings">
-    <b>Il tuo bilancio</b><br><br>
+    <br><b>Il tuo bilancio</b><br><hr>
     <h3 class="title is-3">{{ userBalance }} {{ ticker }}</h3>
+    <div v-if="userBalance > 0">
+      <b-button v-on:click="askRefund" type="is-success">RICHIEDI RIMBORSO</b-button>
+    </div>
     <hr>
     <div v-if="transactions.unconfirmed.length > 0">
       <b>Transazioni in attesa</b><br><br>
@@ -28,17 +31,21 @@
         <div class="card-content">
           <div class="media">
           <div class="media-left">
-            <figure class="image is-48x48">
+            <figure class="image is-100x1">
               <v-gravatar :email="tx.from" />
             </figure>
           </div>
             <div class="media-content">
               <p class="title is-4"><span v-if="tx.amount > 0">+</span>{{ tx.amount }} {{ ticker }}</p>
-              <p class="subtitle is-6">al blocco <b>{{ tx.block }}</b> da <b>{{ tx.from.substr(0,3) }}...{{ tx.from.substr(-3) }}</b></p>
+              <p v-if="tx.to !== chain" style="margin-bottom:0" class="subtitle is-6">da <b>{{ tx.from.substr(0,5) }}...{{ tx.from.substr(-5) }}</b></p>
+              <p style="margin-top:3px">{{ tx.data }}</p>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div v-if="transactions.confirmed.length === 0 && transactions.unconfirmed.length === 0">
+      Nessuna transazione.
     </div>
   </div>
 </template>
@@ -102,10 +109,20 @@ export default {
       })
       for(let x in transactions.transactions){
         let tx = transactions.transactions[x]
-        if(tx.block === null){
-          app.transactions.unconfirmed.push(tx)
-        }else{
-          app.transactions.confirmed.push(tx)
+        if(tx.to !== app.chain){
+          let date = new Date(tx.time)
+          let year = date.getFullYear()
+          let month = date.getMonth() + 1
+          let day = date.getDate()
+          let hours = date.getHours()
+          let minutes = "0" + date.getMinutes()
+          let formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
+          tx.data = formattedTime
+          if(tx.block === null){
+            app.transactions.unconfirmed.push(tx)
+          }else{
+            app.transactions.confirmed.push(tx)
+          }
         }
       }
     } else {
@@ -120,6 +137,72 @@ export default {
     saveChain(){
       const app = this
       localStorage.setItem('chain',app.chain)
+    },
+    askRefund(){
+      const app = this
+      app.$buefy.dialog.prompt({
+        message: `Inserisci pin card`,
+        inputAttrs: {
+          type: "password"
+        },
+        trapFocus: false,
+        onConfirm: async password => {
+          let key = await app.scrypta.readKey(password, app.wallet.wallet);
+          if (key !== false) {
+            let sendsuccess = false
+            let yy = 0
+            let valid = false
+            while(sendsuccess === false){
+              let send = await app.scrypta.post('/sidechain/send',{
+                  from: app.address, 
+                  sidechain_address: app.chain,
+                  private_key: key.prv,
+                  pubkey: key.key,
+                  to: app.chain,
+                  amount: app.userBalance
+              })
+              if(send.uuid !== undefined && send.txs.length === 1 && send.txs[0].length === 64){
+                sendsuccess = true
+                valid = true
+              }
+              yy++
+              if(yy > 4){
+                sendsuccess = true
+                valid = false
+              }
+            }
+            if(valid){
+              setTimeout(async function(){
+                let exp = app.wallet.wallet.split(':')
+                let balance = await app.scrypta.post('/sidechain/balance',{
+                  dapp_address: exp[0],
+                  sidechain_address: app.chain
+                })
+                app.userBalance = balance.balance
+              },5000)
+              app.$buefy.toast.open({
+                duration: 5000,
+                message: `Invio riuscito correttamente.`,
+                position: 'is-bottom',
+                type: 'is-success'
+              })
+              app.showUnlock = false
+            }else{
+              app.$buefy.toast.open({
+                duration: 5000,
+                message: `Invio non riuscito si prega di riprovare.`,
+                position: 'is-bottom',
+                type: 'is-danger'
+              })
+            }
+          }else{
+            app.$buefy.toast.open({
+              message: "Pin errato!",
+              type: "is-danger"
+            });
+          }
+        }
+      })
     }
   },
   watch: {

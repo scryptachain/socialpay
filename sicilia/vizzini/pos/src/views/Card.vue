@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <div v-if="!showScan" style="padding:20px">
+      <b>Controllo saldo card</b><br><hr>
       <div v-if="userBalance !== false">
         <hr>
         <h1>Il saldo è {{ userBalance }} {{ ticker }}</h1>

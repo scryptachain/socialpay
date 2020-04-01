@@ -421,30 +421,17 @@ export default {
           let yy = 0
           let valid = false
           while(sendsuccess === false){
-            if(app.chain !== 'main'){
-              let send = await app.scrypta.post('/sidechain/send',{
-                  from: guestpub, 
-                  sidechain_address: app.chain,
-                  private_key: key.prv,
-                  pubkey: key.key,
-                  to: app.address,
-                  amount: app.amountSidechain
-              })
-              if(send.uuid !== undefined && send.txs.length === 1 && send.txs[0].length === 64){
-                sendsuccess = true
-                valid = true
-              }
-            }else{
-              let send = await app.scrypta.post('/send',{
-                  from: guestpub, 
-                  private_key: key.prv,
-                  to: app.address,
-                  amount: app.amountLyra
-              })
-              if(send.txid !== undefined && send.txid !== null && send.txid.length === 64){
-                sendsuccess = true
-                valid = true
-              }
+            let send = await app.scrypta.post('/sidechain/send',{
+                from: guestpub, 
+                sidechain_address: app.chain,
+                private_key: key.prv,
+                pubkey: key.key,
+                to: app.address,
+                amount: app.amountSidechain
+            })
+            if(send.uuid !== undefined && send.txs.length === 1 && send.txs[0].length === 64){
+              sendsuccess = true
+              valid = true
             }
             yy++
             if(yy > 4){
