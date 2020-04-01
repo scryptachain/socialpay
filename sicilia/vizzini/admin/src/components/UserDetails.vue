@@ -124,7 +124,7 @@
         scrypta: new ScryptaCore(true),
         assetBalance: 0,
         lyraBalance: 0,
-        amountLyra: 0,
+        amountLyra: 0.1,
         amountAsset: 0,
         totRimborsi: 0,
         transactions: [],
