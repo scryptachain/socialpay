@@ -46,6 +46,7 @@
 <script>
 const ScryptaCore = require("@scrypta/core");
 const axios = require('axios')
+let config = require('../config.json')
 export default {
   data() {
     return {
@@ -53,9 +54,9 @@ export default {
       address: "",
       ticker: "",
       wallet: "",
+      config: config,
       axios: axios,
-      currency: 'eur',
-      chain: '6RQ54yHx2dARWkN8Biiw3gDjb4sB5hSHSH',
+      chain: config.sidechain,
       transactions: {
         confirmed: [],
         unconfirmed: []
@@ -67,14 +68,6 @@ export default {
     const app = this;
     app.wallet = await app.scrypta.importBrowserSID();
     app.wallet = await app.scrypta.returnDefaultIdentity();
-    
-    if(localStorage.getItem('currency') !== null){
-      app.currency = localStorage.getItem('currency')
-    }
-
-    if(localStorage.getItem('chain') !== null){
-      app.chain = localStorage.getItem('chain')
-    }
 
     if(app.chain !== 'main'){
       let sidechains = await app.scrypta.get('/sidechain/list')

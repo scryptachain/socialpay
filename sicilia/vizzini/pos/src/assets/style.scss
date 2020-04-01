@@ -1,5 +1,5 @@
 @import "~bulma/sass/utilities/_all";
-$primary: #D8213B;
+$primary: #163457;
 $primary-invert: findColorInvert($primary);
 $twitter: #4099FF;
 $twitter-invert: findColorInvert($twitter);
@@ -43,6 +43,7 @@ $twitter-invert: findColorInvert($twitter);
 .display-number{
     position: relative;
     font-size:45px;
+    margin:10px 0;
     padding:10px 5px;
     height: 85px;
 }

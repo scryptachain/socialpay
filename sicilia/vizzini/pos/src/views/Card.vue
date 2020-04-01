@@ -1,14 +1,15 @@
 <template>
   <div class="home">
     <div v-if="!showScan" style="padding:20px">
-      Controlla il saldo di una card wallet direttamente da qui.<br><br>
-      <div v-if="!userBalance" style="padding:5px 10px">
-        <b-button type="is-primary" v-on:click="showScanQR()" size="is-large">CONTROLLA ORA</b-button>
-      </div>
       <div v-if="userBalance !== false">
         <hr>
         <h1>Il saldo è {{ userBalance }} {{ ticker }}</h1>
-      </div>  
+        <hr>
+      </div>
+      Controlla il saldo di una card wallet direttamente da qui.<br><br>
+      <div style="padding:5px 10px">
+        <b-button type="is-primary" v-on:click="showScanQR()" size="is-large">CONTROLLA ORA</b-button>
+      </div>
     </div>
     <div class="fullscreen" v-if="showScan">
       <b-button v-on:click="hideScanModal" type="is-primary" style="width:50px; position:fixed; z-index:999; top:10px; right:10px;">X</b-button>
@@ -20,6 +21,7 @@
 <script>
 const ScryptaCore = require("@scrypta/core");
 const axios = require('axios')
+let config = require('../config.json')
 export default {
   data() {
     return {
@@ -34,9 +36,10 @@ export default {
       currency: 'eur',
       userBalance: false,
       chains: {},
+      config: config,
       amountSidechain: 0,
       focus: 'lyra',
-      chain: '6RQ54yHx2dARWkN8Biiw3gDjb4sB5hSHSH',
+      chain: config.sidechain,
       showScan: false,
       guestwallet: ''
     };
@@ -45,13 +48,6 @@ export default {
     const app = this;
     app.wallet = await app.scrypta.importBrowserSID();
     app.wallet = await app.scrypta.returnDefaultIdentity();
-    if(localStorage.getItem('currency') !== null){
-      app.currency = localStorage.getItem('currency')
-    }
-
-    if(localStorage.getItem('chain') !== null){
-      app.chain = localStorage.getItem('chain')
-    }
     if(app.chain !== 'main'){
       let sidechains = await app.scrypta.get('/sidechain/list')
       for(let x in sidechains.data){

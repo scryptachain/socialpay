@@ -68,8 +68,9 @@
 </template>
 
 <script>
-const ScryptaCore = require("@scrypta/core");
+const ScryptaCore = require("@scrypta/core")
 const axios = require('axios')
+let config = require('../config.json')
 export default {
   data() {
     return {
@@ -77,6 +78,7 @@ export default {
       address: "",
       wallet: "",
       axios: axios,
+      config: config,
       qrcode: "",
       ticker: "",
       amountLyra: 0,
@@ -85,7 +87,7 @@ export default {
       chains: {},
       amountSidechain: 0,
       focus: 'lyra',
-      chain: '6RQ54yHx2dARWkN8Biiw3gDjb4sB5hSHSH',
+      chain: config.sidechain,
       showScan: false,
       showWaiting: false,
       showUnlock: false,
@@ -99,24 +101,17 @@ export default {
   },
   async mounted() {
     const app = this;
-    app.wallet = await app.scrypta.importBrowserSID();
-    app.wallet = await app.scrypta.returnDefaultIdentity();
-    if(localStorage.getItem('currency') !== null){
-      app.currency = localStorage.getItem('currency')
-    }
+    app.wallet = await app.scrypta.importBrowserSID()
+    app.wallet = await app.scrypta.returnDefaultIdentity()
 
-    if(localStorage.getItem('chain') !== null){
-      app.chain = localStorage.getItem('chain')
-    }
-    if(app.chain !== 'main'){
-      let sidechains = await app.scrypta.get('/sidechain/list')
-      for(let x in sidechains.data){
-        let sidechain = sidechains.data[x]
-        if(sidechain.address === app.chain){
-          app.ticker = sidechain.genesis.symbol
-        }
+    let sidechains = await app.scrypta.get('/sidechain/list')
+    for(let x in sidechains.data){
+      let sidechain = sidechains.data[x]
+      if(sidechain.address === app.chain){
+        app.ticker = sidechain.genesis.symbol
       }
     }
+    
     if (app.wallet.length > 0) {
       let SIDS = app.wallet.split(":");
       app.address = SIDS[0];
