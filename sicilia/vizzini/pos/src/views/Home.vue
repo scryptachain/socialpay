@@ -313,14 +313,14 @@ export default {
         if (app.amountLyra === 0) {
           app.qrcode = app.address
         } else if (app.amountLyra != 0) {
-          app.qrcode = 'lyra:' + this.address + "?" + "amount=" + app.amountLyra
+          app.qrcode = this.address + "?" + "amount=" + app.amountLyra
         }
       }
       if(app.chain !== 'main'){
         if (app.amountSidechain === 0) {
           app.qrcode = app.address
         } else if (app.amountSidechain != 0) {
-          app.qrcode = app.ticker + ':' + this.address + "?" + "amount=" + app.amountSidechain
+          app.qrcode = this.address + "?" + "amount=" + app.amountSidechain
         }
       }
     },
