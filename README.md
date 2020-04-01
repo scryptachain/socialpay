@@ -1,5 +1,4 @@
 # SocialPay
-## Un progetto Scrypta Foundation
 
 SocialPay si propone come soluzione per la rapida erogazione da parte dei comuni nei contronti dei cittadini aventi diritto ai buoni spesa, a seguito della situazione di emergenza generata dal COVID19.
 
