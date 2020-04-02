@@ -24,7 +24,7 @@ La creazione della rappresentazione digitale di valore avviene attraverso la tec
 
 2) Ti serviranno almeno 1.001 LYRA per far partire la sidechain e dovrai versare almeno 0.1 LYRA per ogni account cittadino o esercente, se non dovessi esserne in possesso ti invitiamo ad effettuare una richiesta ufficiale all'email `info@scrypta.foundation`.
 
-3) Collegati su https://planum.dev e crea una nuova sidechain attraverso l'apposito tool di creazione. Rimandiamo ad una guida più dettagliata per eventuale supporto: https://medium.com/@scryptachain/caso-studio-planum-scrypta-sidechain-layer-e-security-token-ff7c145a7d3e. I parametri consigliati per la creazione sono i seguenti: 
+3) Collegati su https://planum.dev e crea una nuova sidechain attraverso l'apposito tool di creazione. Rimandiamo ad una guida più dettagliata per eventuale supporto: https://medium.com/@scryptachain/scrypta-lancia-planum-un-sidechain-layer-per-lemissione-di-tokenized-asset-ee156d300f4d. I parametri consigliati per la creazione sono i seguenti: 
 ```
 nome: SocialPay - Comune di ...
 ticker: sEUR
