@@ -57,7 +57,7 @@
       <a
         href="https://github.com/scryptachain/scrypta-planum-web-pos"
         target="_blank"
-      >open-source</a><br>donato alla comunità dalla
+      >open-source</a><br>donato alla comunità da
       <a href="https://scrypta.foundation" target="_blank">Scrypta Foundation</a>.
     </div>
   </div>

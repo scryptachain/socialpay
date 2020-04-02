@@ -54,7 +54,7 @@
       <a
         href="https://github.com/scryptachain/socialpay"
         target="_blank"
-      >open-source</a><br>donato alla comunità dalla
+      >open-source</a><br>donato alla comunità da
       <a href="https://scrypta.foundation" target="_blank">Scrypta Foundation</a>.
       <br />
       <br />
