@@ -9,11 +9,56 @@ L'intero progetto è open-source, questo significa che puoi generare tutto l'occ
 2) Pos: questo progetto serve a generare il front-end per i commercianti e che permette di spendere i buoni
 3) Card: questo progetto serve a generare le card wallet stampabili in formato QR code per distribuirle ai cittadini
 
+Una cartella generica chiamata `documentazione` contiene tutte le presentazioni, i sorgenti grafici delle card e i prestampati legali per la convenzione con il comune.
+
 ## Come contirubire al progetto
 
 Se vuoi contribuire al progetto puoi creare, in accordo con la volontà comunale, una copia del progetto e richiedere l'inserimento del codice tramite Pull Request.
 All'interno delle cartelle troverai un file `config.json` che ti permette di configurare i parametri di base. Questi comprendono principalmente le modifiche grafiche, di titoli e, chiaramente, permettono di collegare la sidechain tramite indrizzo univoco.
 
+## Operazioni preliminari per impostare il progetto
+
+La creazione della rappresentazione digitale di valore avviene attraverso la tecnologia Sidechain di Planum. Ci sono quindi delle operazioni preliminari da effettuare prima di poter iniziare a compilare i progetti:
+
+1) Vai su https://web.manent.app e crea un nuovo account Scrypta, inserisci una password forte, perchè questo account sarà l'account proprietario della sidechain. Effettua il backup del file .sid e del paper wallet per sicurezza, custodisci questi file gelosamente e offline.
+
+2) Ti serviranno almeno 1.001 LYRA per far partire la sidechain e dovrai versare almeno 0.1 LYRA per ogni account cittadino o esercente, se non dovessi esserne in possesso ti invitiamo ad effettuare una richiesta ufficiale all'email `info@scrypta.foundation`.
+
+3) Collegati su https://planum.dev e crea una nuova sidechain attraverso l'apposito tool di creazione. Rimandiamo ad una guida più dettagliata per eventuale supporto: https://medium.com/@scryptachain/caso-studio-planum-scrypta-sidechain-layer-e-security-token-ff7c145a7d3e. I parametri consigliati per la creazione sono i seguenti: 
+```
+nome: SocialPay - Comune di ...
+ticker: sEUR
+symbol: 2
+supply: Quantità da assegnare
+reissuable: true
+burnable: true
+```
+
+4) Dopo che avrai generato la sidechain dovrai appuntarti l'indirizzo univoco, che ti servirà per collegare le applicazioni alla tua sidechain. Questo indirizzo puoi trovarlo sempre su https://planum.dev/#/explorer alla riga corrispondente, sotto la colonna `address`.
+
+
+## Come compilare la parte di amministrazione
+
+Il software di amministrazione è un progetto electron e dovrai modificare il file sotto `admin/config.json` inserendo i parametri richiesti e dovrai inserire i loghi del comune di riferimento nella cartella `admin/public`.
+
+Dopo aver modificato tutto il necessario è possibile provare in anteprima il software attraverso il comando `npm run electron:serve` oppure creare la build vera e propria con il comando `npm run electron:build`.
+
+## Come compilare il web PoS
+
+Il web PoS è un progetto VueJS e dovrai modificare il file sotto `admin/config.json` inserendo i parametri richiesti e dovrai inserire i loghi del comune di riferimento nella cartella `admin/public`.
+
+Dopo aver modificato tutto il necessario è possibile provare in anteprima il software attraverso il comando `npm run serve` oppure creare la build vera e propria con il comando `npm run build`.
+
+La cartella di distribuzione `dist` dovrà essere pubblicata all'interno di un server Apache. E' fondamentale che venga installato un certificato SSL, consigliamo il servizio gratuito https://letsencrypt.org/ che potrà fornire un certificato SSL gratuito.
+
+## Come crere le card wallet
+
+Le card wallet vengono create attraverso lo script NodeJS presente nella cartella `card`. E' necessario modificare i file grafici nella cartella `assets/` al fine di personalizzare le card per il vostro comune. Il progetto genererà sotto la cartella `prints/` il numero di card richieste ed il solo QR Code ad mandare eventualmente alla tipografia.
+
+Un altro file `out.csv` verrà creato e conterrà tutti i PIN necessari a sbloccare le card. Questo file dovrà essere conservato gelosamente offline e servirà per importare le anagrafiche all'interno del software di amministrazione. Per caricare le anagrafiche si dovrà eliminare la seconda colonna.
+
+Per generare le card si deve aprire il terminale e dare il seguente comando ```node index.js -g=100```. Per modificare la quantità ènecessario modificare il numero `100` con la quantità desiderata. E' molto importante fare un backup della cartella `prints` e del file `out.csv` in quanto questi file vengono cancellati ad ogni nuova generazione.
+
 ## Richieste di aiuto
 
-Se hai bisogno di aiuto per integrare il progetto o trovi bug da risolvere puoi aprire una issue o scrivere su `info@scrypta.foundation'
+Se hai bisogno di aiuto per integrare il progetto o trovi bug da risolvere puoi aprire una issue o scrivere a `info@scrypta.foundation`, ti risponderemo al più presto.

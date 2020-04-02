@@ -42,21 +42,20 @@ async function savePdf(index, sid, password){
     return new Promise(response => {
         let exp = sid.split(':')
         let public = exp[0]
-        let front = new PDFDocument({ layout: 'landscape', size: [558.66,880]}).font('Courier')
+        let front = new PDFDocument({ layout: 'landscape', size: [558.66,880], margin:0}).font('Courier').fontSize(18).fillColor('#163457')
         console.log('GENERATING PDF FOR ' + public)
         QRCode.toDataURL(public,{ errorCorrectionLevel: 'H', margin: 1 }, function (err, publicImage) {
             front.pipe(fs.createWriteStream('./prints/'+index+'_front.pdf'))
             front.image('./assets/front.png', 0, 0, {width: 880, height: 558.66})
-            front.image(publicImage, 75, 285, {width: 200, height: 200})
+            front.text(index, 800, 482)
             front.end()
-            let back = new PDFDocument({ layout: 'landscape', size: [558.66,880]}).font('Courier').fillColor('white').fontSize(15)
+            let back = new PDFDocument({ layout: 'landscape', size: [558.66,880]}).font('Courier')
             QRCode.toDataURL(sid,{ errorCorrectionLevel: 'M', margin: 1}, function (err, sidImage) {
                 back.pipe(fs.createWriteStream('./prints/'+index+'_back.pdf'))
                 back.image('./assets/back.png', 0, 0, {width: 880, height: 558.66})
-                back.image(sidImage, 240, 75, {width: 380})
-                back.text(public, 275, 470)
+                back.image(sidImage, 105, 97, {width: 370})
                 back.end()
-                let qr = new PDFDocument({ layout: 'landscape', size: [500,500]}).font('Courier').fillColor('white').fontSize(15)
+                let qr = new PDFDocument({ layout: 'landscape', size: [500,500]}).font('Courier')
                 QRCode.toDataURL(sid,{ errorCorrectionLevel: 'M', margin: 1}, function (err, sidImage) {
                     qr.pipe(fs.createWriteStream('./prints/'+index+'_qr.pdf'))
                     qr.image(sidImage, 0, 0, {width: 500, height: 500})
