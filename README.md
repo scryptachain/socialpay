@@ -51,7 +51,7 @@ Dopo aver modificato tutto il necessario è possibile provare in anteprima il so
 
 La cartella di distribuzione `dist` dovrà essere pubblicata all'interno di un server Apache. E' fondamentale che venga installato un certificato SSL, consigliamo il servizio gratuito https://letsencrypt.org/ che potrà fornire un certificato SSL gratuito.
 
-## Come crere le card wallet
+## Come creare le card wallet
 
 Le card wallet vengono create attraverso lo script NodeJS presente nella cartella `card`. E' necessario modificare i file grafici nella cartella `assets/` al fine di personalizzare le card per il vostro comune. Il progetto genererà sotto la cartella `prints/` il numero di card richieste ed il solo QR Code ad mandare eventualmente alla tipografia.
 
