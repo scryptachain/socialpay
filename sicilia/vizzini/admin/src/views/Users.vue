@@ -45,11 +45,11 @@
                         {{ props.row.identifier }}
                     </b-table-column>
 
-                    <b-table-column field="user.identifier" label="C. nuc. fam." searchable sortable>
+                    <b-table-column field="user.nucleo" label="C. nuc. fam." searchable sortable>
                         {{ props.row.nucleo }}
                     </b-table-column>
 
-                    <b-table-column width="130" label="Azioni" sortable>
+                    <b-table-column width="140" label="Azioni" sortable>
                       <b-button type="is-primary" v-on:click="editUser(props.row)" size="is-small">
                         <b-icon
                             pack="fas"
