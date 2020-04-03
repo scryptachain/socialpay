@@ -40,7 +40,7 @@ export default {
       db: new ScryptaDB(true, ['users', 'settings']),
       scrypta: new ScryptaCore(true),
       users: [],
-      fields: ['id', 'sid', 'filter', 'name', 'identifier'],
+      fields: ['id', 'sid', 'filter', 'name', 'identifier', 'nucleo'],
       user: {
         owner: {
           '-': {
