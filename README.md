@@ -28,7 +28,7 @@ La creazione della rappresentazione digitale di valore avviene attraverso la tec
 ```
 nome: SocialPay - Comune di ...
 ticker: sEUR
-symbol: 2
+decimals: 2
 supply: Quantità da assegnare
 reissuable: true
 burnable: true
