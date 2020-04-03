@@ -21,11 +21,14 @@
             <div v-if="isSending">Invio transazione in corso...</div>
           </div>
           <div v-if="!isChecked" style="text-align:center">Controllo se è stato emesso il rimborso...</div>
-          <div v-if="isChecked && contabilizzato" style="text-align:left">
+          <div v-if="isChecked && contabilizzato && confirmed" style="text-align:left">
             <b>Data:</b> {{ rimborso.data }}<br>
             <b>Riferimento:</b> {{ rimborso.txid.substr(0,8) }}...{{ rimborso.txid.substr(-8) }}<br>
             <b>Importo:</b> {{ refund.amount }} EUR<br>
-            <b>Note:</b> {{ rimborso.note }}
+            <b v-if="rimborso.note">Note:</b> {{ rimborso.note }}
+          </div>
+          <div v-if="isChecked && contabilizzato && !confirmed" style="text-align:center">
+            Rimborso inviato, ma non confermato, si prega di attendere qualche minuto.
           </div>
         </section>
     </div>
@@ -49,6 +52,7 @@
         refundNotes: '',
         rimborso: {},
         isChecked: false,
+        confirmed: false,
         contabilizzato: false,
         isSending: false,
         owner: {
@@ -92,6 +96,7 @@
               app.rimborso.data = formattedTime
               app.rimborso.note = LZUTF8.decompress(data[2], { inputEncoding: 'Base64' })
               app.isChecked = true
+              app.confirmed = true
             }
           }
         }

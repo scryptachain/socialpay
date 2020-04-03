@@ -5,7 +5,7 @@
     <div v-if="userBalance > 0">
       <b-button v-on:click="askRefund" type="is-success">RICHIEDI RIMBORSO</b-button>
     </div>
-    <hr>
+    <br>
     <div v-if="transactions.unconfirmed.length > 0">
       <b>Transazioni in attesa</b><br><br>
       <div class="card" v-for="tx in transactions.unconfirmed" v-bind:key="tx.sxid">

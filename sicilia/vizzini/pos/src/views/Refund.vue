@@ -1,15 +1,15 @@
 <template>
   <div class="settings">
     <div v-if="!isLoading">
-      <div v-if="refundrequests.length > 0">
-        <br><b>Richieste di rimborso</b><br><hr>
-        <div v-for="tx in refundrequests" v-bind:key="tx.sxid">
-          <div class="card" v-if="torefund[tx.sxid] !== undefined">
+      <div v-if="Object.keys(torefund).length > 0">
+        <br><b>Richieste di rimborso</b><br><br>
+        <div v-for="tx in torefund" v-bind:key="tx">
+          <div class="card">
             <div class="card-content">
               <div class="media">
                 <div class="media-left">
-                  <figure class="image is-100x1">
-                    <v-gravatar :email="address" />
+                  <figure class="image">
+                    <v-gravatar :email="address" style="height:55px; width:55px" />
                   </figure>
                 </div>
                 <div class="media-content">
@@ -21,20 +21,21 @@
           </div>
         </div>
       </div>
-      <br><b>Storico rimborsi</b><br><hr>
+      <br><b>Storico rimborsi</b><br><br>
       <div v-if="refunds.length > 0">
         <div class="card" v-for="tx in refunds" v-bind:key="tx.sxid">
           <div class="card-content">
             <div class="media">
               <div class="media-left">
-                <figure class="image is-100x1">
+                <figure class="image">
                   <v-gravatar :email="address" />
                 </figure>
               </div>
               <div class="media-content">
-                <p class="title is-4">{{ tx.importo }}</p>
-                <p class="subtitle is-6">{{ tx.data }}</p>
-                <p>{{ tx.note }}</p>
+                <p class="title is-4" style="margin:0">{{ tx.importo }}</p>
+                <p class="subtitle is-6" style="margin:5px 0">{{ tx.data }}</p>
+                <span v-if="tx.note">{{ tx.note }}</span>
+                <span v-if="!tx.note">NESSUNA NOTA</span>
               </div>
             </div>
           </div>
@@ -68,7 +69,7 @@ export default {
       owner: '',
       refunds: [],
       refundrequests: [],
-      torefund: [],
+      torefund: {},
       chain: config.sidechain,
       transactions: {
         confirmed: [],
@@ -108,6 +109,7 @@ export default {
       app.isLogging = false;
 
       let refundrequests = {}
+      let torefund = {}
       let transactions = await app.scrypta.post('/sidechain/transactions', { dapp_address: app.address, sidechain_address: app.chain })
       app.transactions = transactions.transactions
       for(let x in app.transactions){
@@ -121,11 +123,13 @@ export default {
           let formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
           app.transactions[x].data = formattedTime
           refundrequests[app.transactions[x].sxid] = app.transactions[x].amount
-          app.torefund[app.transactions[x].sxid] = app.transactions[x].amount
+          torefund[app.transactions[x].sxid] = {
+            amount: app.transactions[x].amount,
+            data: formattedTime
+          }
           app.refundrequests.push(app.transactions[x])
         }
       }
-
       let received = await app.scrypta.post('/received', { address: app.address })
       for(let x in received.data){
         let tx = received.data[x]
@@ -150,11 +154,12 @@ export default {
               rimborso.importo = rimborso.importo + " EUR"
               app.refunds.push(rimborso)
               app.refundrequests[data[1]]
-              delete app.torefund[data[1]]
+              delete torefund[data[1]]
             }
           }
         }
       }
+      app.torefund = torefund
       app.isLoading = false
     } else {
       app.isLogging = false;
