@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <vue-headful :title="config.header" />
-    <div v-if="wallet">
+    <div v-if="wallet && userIsOnline">
       <b-navbar>
           <template slot="brand">
             <b-navbar-item v-on:click="navigate('home')">
@@ -32,7 +32,7 @@
         <settings v-if="route==='settings'" />
         <refund v-if="route==='refund'" />
     </div>
-    <div class="container" v-if="!wallet">
+    <div class="container" v-if="!wallet && userIsOnline">
       <div class="text-center" style="margin-top:10vh">
         <img :src="'/' + config.completo" width="15%" /><br><br>
         <h1>Effettua il login con l'account proprietario.</h1><br>
@@ -47,6 +47,10 @@
           Login in corso...
         </div>
       </div>
+    </div>
+    <div v-if="!userIsOnline" style="padding: 25vh; text-align:center">
+      <img :src="'/' + config.completo" width="15%" /><br><br>
+      <h1>Collegarsi a internet prima di continuare.</h1>
     </div>
     <div class="text-center">
       <hr>
@@ -71,6 +75,7 @@ export default {
     return {
       scrypta: new ScryptaCore(true),
       address: "",
+      userIsOnline: false,
       wallet: "",
       route: 'home',
       isLogging: false,
@@ -81,17 +86,20 @@ export default {
   },
   async mounted() {
     const app = this;
-    app.wallet = await app.scrypta.importBrowserSID();
-    app.wallet = await app.scrypta.returnDefaultIdentity();
-    if (app.wallet.length > 0) {
-      let SIDS = app.wallet.split(":");
-      app.address = SIDS[0];
-      let identity = await app.scrypta.returnIdentity(app.address);
-      app.wallet = identity;
-      app.isLogging = false;
-    } else {
-      app.isLogging = false;
-    }
+    app.isOnline(async function(){
+      app.userIsOnline = true
+      app.wallet = await app.scrypta.importBrowserSID();
+      app.wallet = await app.scrypta.returnDefaultIdentity();
+      if (app.wallet.length > 0) {
+        let SIDS = app.wallet.split(":");
+        app.address = SIDS[0];
+        let identity = await app.scrypta.returnIdentity(app.address);
+        app.wallet = identity;
+        app.isLogging = false;
+      } else {
+        app.isLogging = false;
+      }
+    })
   },
   methods: {
     navigate(page){
@@ -144,7 +152,39 @@ export default {
     logout() {
       localStorage.setItem("SID", "");
       location.reload();
-    }
+    },
+    isOnline(user_callback){
+      var message = function(){
+          const {dialog} = require('electron').remote;
+
+          return dialog.showMessageBox({
+              title:"Non c'è internet!",
+              message:"Il software necessita di Internet, collegarsi e riprovare.",
+              type:'warning',
+              buttons:["Riprova","Ignora"],
+              defaultId: 0
+          },function(index){
+              // if clicked "Try again please"
+              if(index == 0){
+                  execute();
+              }
+          })
+      };
+
+      var execute = function(){
+          if(navigator.onLine){
+              // Execute action if internet available.
+              user_callback();
+          }else{
+              // Show warning to user
+              // And "retry" to connect
+              message();
+          }
+      };
+
+      // Verify for first time
+      execute();
+  }
   }
 };
 </script>
