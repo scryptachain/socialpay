@@ -32,11 +32,12 @@
       </div>
     </div>
     <div v-if="showWaiting">
-      <vue-qrcode :value="qrcode" style="width:100%" :width="500" />
-      <h1 class="title is-2" v-if="chain !== 'main'">{{ amountSidechain }} {{ ticker }}</h1>
-      <h1 class="title is-2" v-if="chain == 'main'">{{ amountLyra }} LYRA</h1>
-      <div style="padding:0 10px">
+      <h1 class="title is-1" style="margin:20vh 0" v-if="chain !== 'main'">{{ amountSidechain }} {{ ticker }}</h1>
+      <div style="padding:10px">
         <b-button type="is-primary" v-on:click="showScanQR()" size="is-large">LEGGI CARTA</b-button>
+      </div>
+      <div style="padding:10px">
+        <b-button type="is-danger" v-on:click="hidePaymnent()" size="is-large">ANNULLA PAGAMENTO</b-button>
       </div>
     </div>
     <div class="fullscreen" v-if="showScan">
@@ -306,6 +307,13 @@ export default {
     showScanQR(){
       const app = this
       app.showScan = true
+    },
+    hidePaymnent(){
+      const app = this
+      app.showWaiting = false
+      app.amountSidechain = 0
+      app.amountLyra = 0
+      app.amountFIAT = 0
     },
     calculateQRCode() {
       const app = this
