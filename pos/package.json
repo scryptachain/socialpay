@@ -1,6 +1,6 @@
 {
-  "name": "socialpay-pos-vizzini",
-  "version": "1.0.6",
+  "name": "socialpay-pos-development",
+  "version": "1.0.7",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

@@ -1,6 +1,6 @@
 {
-  "name": "socialpay-admin-vizzini",
-  "version": "0.1.0",
+  "name": "socialpay-admin-development",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
