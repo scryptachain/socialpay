@@ -40,16 +40,16 @@
                     {{ props.row.sxid.substr(0,4) }}...{{ props.row.sxid.substr(-4) }}
                 </b-table-column>
 
-                <b-table-column label="Blocco" sortable>
-                    {{ props.row.block }}
+                <b-table-column label="Data">
+                    {{ props.row.time }}
                 </b-table-column>
                 
-                <b-table-column width="90" style="text-align: center" label="Rimborsato" sortable>
+                <b-table-column width="90" style="text-align: center" label="Rimborsato">
                   <span v-if="contabilizzati.indexOf(props.row.sxid) === -1">NO</span>
                   <span v-if="contabilizzati.indexOf(props.row.sxid) !== -1">SI</span>
                 </b-table-column>
 
-                <b-table-column width="40" style="text-align:center" label="Azioni" sortable>
+                <b-table-column width="40" style="text-align:center" label="Azioni">
                   <b-button type="is-primary" v-on:click="editRefund(props.row)" size="is-small">
                     <b-icon
                         pack="fas"
@@ -167,13 +167,22 @@ export default {
           if(app.esercenti.indexOf(address) === -1){
             app.esercenti.push(address)
           }
+          var date = new Date(response.data[x].transaction.time)
+          var year = date.getFullYear()
+          var month = date.getMonth() + 1
+          var day = date.getDate()
+          var hours = date.getHours()
+          var minutes = "0" + date.getMinutes()
+          var formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
+
           let transaction = {
             sxid: response.data[x].sxid,
             amount: value,
             from: from,
             to: to,
             address: address,
-            block: block
+            block: block,
+            time: formattedTime
           }
           transactions.push(transaction)
         }

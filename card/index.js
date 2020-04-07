@@ -60,6 +60,10 @@ async function savePdf(index, sid, password){
                     qr.pipe(fs.createWriteStream('./prints/'+index+'_qr.pdf'))
                     qr.image(sidImage, 0, 0, {width: 500, height: 500})
                     qr.end()
+                    let pin = new PDFDocument().font('Courier')
+                    pin.pipe(fs.createWriteStream('./prints/'+index+'_lettera.pdf'))
+                    pin.text(password, 20, 30)
+                    pin.end()
                     setTimeout(function(){
                         response(true)
                     },500)

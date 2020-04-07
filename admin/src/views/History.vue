@@ -40,8 +40,8 @@
                     {{ props.row.sxid.substr(0,4) }}...{{ props.row.sxid.substr(-4) }}
                 </b-table-column>
 
-                <b-table-column label="Blocco" sortable>
-                    {{ props.row.block }}
+                <b-table-column label="Data">
+                    {{ props.row.time }}
                 </b-table-column>
             </template>
           </b-table>
@@ -83,7 +83,7 @@ export default {
       currentPage: 1,
       perPage: 15,
       transactions: [],
-      fields: ['sxid', 'from', 'to', 'amount', 'block'],
+      fields: ['sxid', 'from', 'to', 'amount', 'time'],
       user: {
         owner: {
           '-': {
@@ -153,12 +153,20 @@ export default {
           to = app.parsedUsers[to]
         }
         if(to !== app.user.chain){
+          var date = new Date(response.data[x].transaction.time)
+          var year = date.getFullYear()
+          var month = date.getMonth() + 1
+          var day = date.getDate()
+          var hours = date.getHours()
+          var minutes = "0" + date.getMinutes()
+          var formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
           let transaction = {
             sxid: response.data[x].sxid,
             amount: value,
             from: from,
             to: to,
-            block: block
+            block: block,
+            time: formattedTime
           };
           transactions.push(transaction);
         }
