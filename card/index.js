@@ -7,6 +7,7 @@ const scrypta = new ScryptaCore
 var QRCode = require('qrcode')
 const PDFDocument = require('pdfkit');
 const fs = require('fs')
+const config = require('./config.json')
 
 function randomC (qty) {
     var x= crypto.randomBytes(qty);
@@ -42,7 +43,7 @@ async function savePdf(index, sid, password){
     return new Promise(response => {
         let exp = sid.split(':')
         let public = exp[0]
-        let front = new PDFDocument({ layout: 'landscape', size: [558.66,880], margin:0}).font('Courier').fontSize(18).fillColor('#163457')
+        let front = new PDFDocument({ layout: 'landscape', size: [558.66,880], margin:0 }).font('Courier').fontSize(18).fillColor('#163457')
         console.log('GENERATING PDF FOR ' + public)
         QRCode.toDataURL(public,{ errorCorrectionLevel: 'H', margin: 1 }, function (err, publicImage) {
             front.pipe(fs.createWriteStream('./prints/'+index+'_front.pdf'))
@@ -60,9 +61,17 @@ async function savePdf(index, sid, password){
                     qr.pipe(fs.createWriteStream('./prints/'+index+'_qr.pdf'))
                     qr.image(sidImage, 0, 0, {width: 500, height: 500})
                     qr.end()
-                    let pin = new PDFDocument().font('Courier')
+                    let pin = new PDFDocument({ margin: 80 }).font('Courier')
                     pin.pipe(fs.createWriteStream('./prints/'+index+'_lettera.pdf'))
-                    pin.text(password, 20, 30)
+                    pin.fontSize(24)
+                    pin.text('Social Pay - PIN Card', { align: 'center' })
+                    pin.fontSize(14)
+                    pin.text("\n\n\n\nGentile Utente,\nquesto è il PIN (password numerica) associato alla sua Social Pay Card, le verrà richiesto per ogni acquisto che effettua con la suddetta carta:", { align: 'justify' })
+                    pin.fontSize(24)
+                    pin.text("\n\n\n" + password + "\n\n\n", { align: 'center' })
+                    pin.fontSize(14)
+                    pin.text("E’ pregato di memorizzare il PIN e custodirlo con cura.\n\nE’ indispensabile non rivelare a nessuno il PIN associato alla sua Social Pay Card.\n\n\nNel caso in cui dovesse perderlo, non sarà più possibile utilizzare la Card.\n\nQualora dovesse smarrirlo, sarà necessario contattare il supporto ai seguenti recapiti:\n\nE-mail: " + config.email + "\n\nRecapito telefonico: " + config.numero + "\n\n\nDistinti saluti,\n" + config.firma, { align: 'justify' })
+
                     pin.end()
                     setTimeout(function(){
                         response(true)
