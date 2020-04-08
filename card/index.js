@@ -97,7 +97,7 @@ async function init(){
     }
 
     const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-    const csvWriter = createCsvWriter({
+    const csvWriterOut = createCsvWriter({
         path: 'out.csv',
         header: [
             {id: 'key', title: 'Key'},
@@ -105,7 +105,16 @@ async function init(){
             {id: 'sid', title: 'SID'},
         ]
     });
-    csvWriter.writeRecords(addresses).then(()=> console.log('The CSV file was written successfully with ' + number + ' sid.'))
+    csvWriterOut.writeRecords(addresses).then(()=> console.log('The CSV file was written successfully with ' + number + ' sid.'))
+
+    const csvWriterImport = createCsvWriter({
+        path: 'import.csv',
+        header: [
+            {id: 'key', title: 'ID'},
+            {id: 'sid', title: 'WALLET'},
+        ]
+    });
+    csvWriterImport.writeRecords(addresses).then(()=> console.log('The CSV file was written successfully with ' + number + ' sid.'))
 
 }
 
