@@ -1,8 +1,10 @@
 # SocialPay - Rassegna Stampa
 
+Cointelegraph
+https://it.cointelegraph.com/news/il-comune-di-vizzini-utilizzera-la-blockchain-per-la-distribuzione-dei-buoni-spesa
+
 FocuSicilia
 https://www.focusicilia.it/2020/04/03/vizzini-buoni-spesa-digitali-con-la-blockchain-di-scrypta/
-
 
 Ragusa Oggi
 https://www.ragusaoggi.it/vizzini-una-card-ricaricabile-per-ricevere-e-gestire-da-smartphone-i-buoni-spesa-per-lemergenza-covid-19/
