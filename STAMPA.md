@@ -103,3 +103,7 @@ http://ennapress.it/buoni-spesa-digitali-per-aiutare-le-famiglie-campo-m5s-prati
 
 StrettoWeb
 http://www.strettoweb.com/2020/04/coronavirus-messina-i-consiglieri-m5s-basta-coi-giochetti-e-gli-show-in-diretta-facebook-aiutare-chi-e-in-difficolta-migliaia-di-famiglie-non-sanno-piu-come-andare-avanti/997381/
+
+Anci Nazionale
+http://www.anci.it/scrypta-foundation-buoni-spesa-digitali-con-social-pay/
+
