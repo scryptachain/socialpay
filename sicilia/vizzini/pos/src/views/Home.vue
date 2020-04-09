@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div v-if="!showScan && !showWaiting && !showUnlock">
+    <div v-if="!showScan && !showWaiting && !showUnlock && !showSuccess">
       <div v-if="chain === 'main' && focus === 'lyra'" v-on:click="fixInputs('lyra')" class="display-number">
         {{ amountLyra }}
         <span style="position:absolute; top: 10px; right:10px;">LYRA</span>
@@ -30,6 +30,13 @@
       <div style="padding:5px 10px">
         <b-button type="is-primary" v-on:click="waitForPayment()" size="is-large">PAGA</b-button>
       </div>
+    </div>
+    <div v-if="showSuccess" style="padding:50px">
+      <br><br>
+      <img src="/conferma.png" width="100%"><br><br>
+      Transazione confermata<br>
+      Si prega di attendere qualche minuto prima di visualizzare l'accredito.<br><br>
+      <b-button v-on:click="hideSuccess" type="is-danger">CHIUDI</b-button>
     </div>
     <div v-if="showWaiting">
       <h1 class="title is-1" style="margin:20vh 0" v-if="chain !== 'main'">{{ amountSidechain }} {{ ticker }}</h1>
@@ -90,6 +97,7 @@ export default {
       focus: 'lyra',
       chain: config.sidechain,
       showScan: false,
+      showSuccess: false,
       showWaiting: false,
       showUnlock: false,
       isWaiting: false,
@@ -124,6 +132,10 @@ export default {
     }
   },
   methods: {
+    hideSuccess(){
+      const app = this
+      app.showSuccess = false
+    },
     hideScanModal() {
       const app = this
       app.showScan = false
@@ -449,13 +461,8 @@ export default {
           }
           if(valid){
             app.guestpin = ''
-            app.$buefy.toast.open({
-              duration: 5000,
-              message: `Invio riuscito correttamente.`,
-              position: 'is-bottom',
-              type: 'is-success'
-            })
             app.showUnlock = false
+            app.showSuccess = true
           }else{
             app.$buefy.toast.open({
               duration: 5000,
