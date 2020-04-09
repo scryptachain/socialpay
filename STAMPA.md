@@ -1,8 +1,10 @@
 # SocialPay - Rassegna Stampa
 
+Cointelegraph
+https://it.cointelegraph.com/news/il-comune-di-vizzini-utilizzera-la-blockchain-per-la-distribuzione-dei-buoni-spesa
+
 FocuSicilia
 https://www.focusicilia.it/2020/04/03/vizzini-buoni-spesa-digitali-con-la-blockchain-di-scrypta/
-
 
 Ragusa Oggi
 https://www.ragusaoggi.it/vizzini-una-card-ricaricabile-per-ricevere-e-gestire-da-smartphone-i-buoni-spesa-per-lemergenza-covid-19/
@@ -107,3 +109,8 @@ http://www.strettoweb.com/2020/04/coronavirus-messina-i-consiglieri-m5s-basta-co
 Anci Nazionale
 http://www.anci.it/scrypta-foundation-buoni-spesa-digitali-con-social-pay/
 
+Crema Oggi
+https://www.cremaoggi.it/2020/04/09/buoni-spesa-m5s-crema-colga-le-opportunita-sia-davvero-smart-city/
+
+Agenzia Nova
+https://www.agenzianova.com/a/5e8ed83206b8a3.66213276/2888392/2020-04-09/coronavirus-degli-angeli-m5s-per-buoni-spesa-soluzione-piu-efficace-sta-nel-digitale
