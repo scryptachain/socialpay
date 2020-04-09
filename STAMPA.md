@@ -66,3 +66,40 @@ http://www.sicilia5stelle.it/2020/04/buoni-spesa-digitali-per-aiutare-le-famigli
 
 Covid19Italiahelp
 https://www.covid19italia.help/issues/2284/
+
+LaValledeiTempli
+http://www.lavalledeitempli.net/2020/04/07/buoni-spesa-digitali-aiutare-le-famiglie-campo-m5s-pratiche-semplificate-diffonderla-tutti-comuni/
+
+Il Quotidiano di Palermo
+https://ilquotidianodipalermo.wordpress.com/2020/04/06/covid-19-buoni-spesa-con-blockchain-da-scrypta-foundation-un-sistema-di-gestione-per-comuni-e-cittadini/
+
+Giornale del Mediterraneo
+https://www.gdmed.it/2020/04/08/buoni-spesa-digitali-per-aiutare-le-famiglie-campo-m5s-pratiche-semplificate-da-diffondere-in-tutti-i-comuni/
+
+Sicilia Oggi
+https://www.siciliaogginotizie.it/2020/04/07/buoni-spesa-digitali-per-aiutare-le-famiglie-campo-m5s-pratiche-semplificate-diffonderla-in-tutti-i-comuni/
+
+Il Circolaccio
+https://ilcircolaccio.it/2020/04/07/buoni-spesa-digitali-per-aiutare-le-famiglie-campo-m5s-pratiche-semplificate-diffonderla-in-tutti-i-comuni/
+
+SuperSud
+https://www.supersud.it/2020/04/07/covid-19-ora-anche-la-sicilia-ha-la-sua-social-pay/
+
+Quotidiano di Sicilia
+https://qds.it/aiuti-alle-famiglie-con-card-digitali-la-proposta-del-m5s/
+
+Seguo news
+http://www.seguonews.it/buoni-spesa-digitali-per-aiutare-le-famiglie-campo-m5s-pratiche-semplificate-da-diffondere-in-tutti-i-comuni
+
+97100.it
+https://97100.it/2020/04/08/covid-19-buoni-spesa-con-blockchain-da-scrypta-foundation-un-sistema-di-gestione-per-comuni-e-cittadini/?fbclid=IwAR1cQvZVmSOFfit61NHUPIIol1faX46-JFqrG8lTfKCH1fHTAFfMZnU92bs
+
+Economia sicilia
+https://www.economysicilia.it/covid-19-con-scrypta-foundation-i-buoni-spesa-grazie-alla-blockchain/
+
+
+Ennapress
+http://ennapress.it/buoni-spesa-digitali-per-aiutare-le-famiglie-campo-m5s-pratiche-semplificate-da-diffondere-in-tutti-i-comuni.html
+
+StrettoWeb
+http://www.strettoweb.com/2020/04/coronavirus-messina-i-consiglieri-m5s-basta-coi-giochetti-e-gli-show-in-diretta-facebook-aiutare-chi-e-in-difficolta-migliaia-di-famiglie-non-sanno-piu-come-andare-avanti/997381/
