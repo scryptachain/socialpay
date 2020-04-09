@@ -87,7 +87,7 @@
           <div class="card">
             <div class="card-content">
               <p class="title">
-                {{ totalSupply }}
+                {{ formatEUR(totalSupply) }}
               </p>
               <p class="subtitle">
                 {{ user.owner[user.chain].genesis.symbol }} in totale
@@ -99,7 +99,7 @@
           <div class="card">
             <div class="card-content">
               <p class="title">
-                {{ circularSupply }}
+                {{ formatEUR(circularSupply) }}
               </p>
               <p class="subtitle">
                 {{ user.owner[user.chain].genesis.symbol }} in circolazione
@@ -111,7 +111,7 @@
           <div class="card">
             <div class="card-content">
               <p class="title">
-                {{ burnedSupply }}
+                {{ formatEUR(burnedSupply) }}
               </p>
               <p class="subtitle">
                 {{ user.owner[user.chain].genesis.symbol }} bruciati
@@ -263,6 +263,12 @@ export default {
     app.totalSupply = parseFloat(shares.cap.toFixed(app.user.owner[app.user.chain].genesis.decimals)) - parseFloat(app.burnedSupply)
     app.totalSupply = app.totalSupply.toFixed(app.user.owner[app.user.chain].genesis.decimals)
     app.transactions = transactions
+  },
+  methods: {
+    formatEUR(value) {
+        let val = (value/1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    }
   }
 };
 </script>

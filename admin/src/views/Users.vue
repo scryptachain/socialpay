@@ -5,6 +5,7 @@
       <hr>
       <div class="columns">
         <div class="column">
+          <b-button type="is-primary" v-on:click="createUser" style="position:absolute; top:0; right:0">CREA UTENTE</b-button>
           <b-tabs :animated="false">
             <b-tab-item label="Elenco utenti">
               <b-table
@@ -72,7 +73,7 @@
                 </template>
               </b-table>
               <div v-if="users.length === 0">
-                <p>Nessun utente, si prega di importarli attraverso l'apposito tab.</p>
+                <p>Nessun utente, si prega di importarli attraverso l'apposito tab o crearne uno manualmente.</p>
               </div>
             </b-tab-item>
 
@@ -102,11 +103,15 @@
 
 <script>
 let ScryptaCore = require("@scrypta/core")
+let config = require('../config.json')
 import User from '../libs/user.js'
 import ScryptaDB from '../libs/db.js'
 const parse = require("csv-parse")
-import UserForm from '../components/UserForm.vue'
+const QRious = require('qrious')
+import UserEdit from '../components/UserEdit.vue'
+import UserNew from '../components/UserNew.vue'
 import UserDetails from '../components/UserDetails.vue'
+import jsPDF from 'jspdf'
 
 export default {
   data() {
@@ -118,6 +123,7 @@ export default {
       isPaginationSimple: false,
       paginationPosition: 'bottom',
       defaultSortDirection: 'asc',
+      config: config,
       sortIcon: 'arrow-up',
       sortIconSize: 'is-small',
       currentPage: 1,
@@ -198,10 +204,42 @@ export default {
       };
       reader.readAsText(file);
     },
+    createUser(){
+      const app = this
+      app.$buefy.modal.open({
+          parent: this,
+          component: UserNew,
+          hasModalCard: true,
+          trapFocus: false,
+          events: {
+            'userInserted': async created => {
+              if(created.pin !== undefined){
+                app.users = await app.db.get('users')
+                let pdfName = created.id + '_' + created.address; 
+                let doc = new jsPDF();
+                let qr = new QRious({ value: created.sid, size: 500 });
+                doc.setFontSize(24)
+                doc.text('Social Pay - PIN Card', 10, 25)
+                doc.setFontSize(14)
+                doc.text("\n\n\n\nGentile Utente,\nquesto è il PIN (password numerica) associato alla sua Social Pay Card,\nle verrà richiesto per ogni acquisto che effettua con la suddetta carta:", 10, 20)
+                doc.setFontSize(24)
+                doc.text("\n\n\n" + created.pin + "\n\n\n", 10, 60)
+                doc.setFontSize(14)
+                doc.text("E’ pregato di memorizzare il PIN e custodirlo con cura.\n\nE’ indispensabile non rivelare a nessuno il PIN associato alla sua Social Pay Card.\n\n\nNel caso in cui dovesse perderlo, non sarà più possibile utilizzare la Card.\n\nQualora dovesse smarrirlo, sarà necessario contattare il supporto ai seguenti recapiti:\n\nE-mail: " + config.email + "\n\nRecapito telefonico: " + config.numero + "\n\n\nDistinti saluti,\n" + config.firma, 10, 120)
+                doc.addPage()
+                doc.setFontSize(24)
+                doc.text('Social Pay - QR code da esibire', 10, 25)
+                doc.addImage(qr.toDataURL(), "JPEG", 55, 80, 100, 100);
+                doc.save(pdfName + '.pdf');
+              }
+            }
+          }
+      })
+    },
     editUser(user) {
       this.$buefy.modal.open({
           parent: this,
-          component: UserForm,
+          component: UserEdit,
           hasModalCard: true,
           trapFocus: false,
           props: {user: user}

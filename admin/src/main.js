@@ -13,6 +13,7 @@ import { faCheck, faCheckCircle, faInfoCircle, faExclamationTriangle, faExclamat
     faArrowUp, faAngleRight, faAngleLeft, faAngleDown, faPen, faTrash, faFileCsv,
     faEye, faEyeSlash, faCaretDown, faCaretUp, faUpload } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import VueQrcode from 'vue-qrcode'
 
 Vue.config.productionTip = true
 library.add(faCheck, faCheckCircle, faInfoCircle, faExclamationTriangle, faExclamationCircle,
@@ -21,6 +22,7 @@ library.add(faCheck, faCheckCircle, faInfoCircle, faExclamationTriangle, faExcla
 
 Vue.component('vue-headful', vueHeadful)
 Vue.component('vue-fontawesome', FontAwesomeIcon)
+Vue.component('vue-qrcode', VueQrcode)
 Vue.component('home', Home)
 Vue.component('users', Users)
 Vue.component('history', History)

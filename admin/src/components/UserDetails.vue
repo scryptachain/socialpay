@@ -10,6 +10,9 @@
         <section class="modal-card-body">
           <div class="columns">
             <div class="column">
+              <vue-qrcode style="width:100%" type="image/jpeg" :value="user.sid" />
+            </div>
+            <div class="column">
               <h1>Nome: <span style="font-weight:normal">{{ user.name }}</span></h1>
               <h1>Tipologia: <span style="font-weight:normal">{{ user.filter }}</span></h1>
               <h1>Identificativo: <span style="font-weight:normal">{{ user.identifier }}</span></h1>

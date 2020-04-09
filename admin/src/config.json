@@ -5,5 +5,8 @@
     "logo": "logo.png",
     "lettering": "lettering.png",
     "completo": "completo.png",
-    "fees": 0
+    "fees": 0,
+    "firma": "Scrypta Foundation",
+    "email": "info@scrypta.foundation",
+    "numero": "+39 333 11 22 333"
 }
