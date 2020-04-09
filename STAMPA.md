@@ -111,3 +111,6 @@ http://www.anci.it/scrypta-foundation-buoni-spesa-digitali-con-social-pay/
 
 Crema Oggi
 https://www.cremaoggi.it/2020/04/09/buoni-spesa-m5s-crema-colga-le-opportunita-sia-davvero-smart-city/
+
+Agenzia Nova
+https://www.agenzianova.com/a/5e8ed83206b8a3.66213276/2888392/2020-04-09/coronavirus-degli-angeli-m5s-per-buoni-spesa-soluzione-piu-efficace-sta-nel-digitale
