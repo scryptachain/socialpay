@@ -107,3 +107,5 @@ http://www.strettoweb.com/2020/04/coronavirus-messina-i-consiglieri-m5s-basta-co
 Anci Nazionale
 http://www.anci.it/scrypta-foundation-buoni-spesa-digitali-con-social-pay/
 
+Crema Oggi
+https://www.cremaoggi.it/2020/04/09/buoni-spesa-m5s-crema-colga-le-opportunita-sia-davvero-smart-city/
