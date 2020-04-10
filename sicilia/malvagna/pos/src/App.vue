@@ -38,7 +38,7 @@
           <div class="container" id="create" style="margin-top:50px;">
             <div class="">
               <div style="padding: 50px 20px;">
-                <img src="/completo.png" width="55%"><br>
+                <img src="/completo.jpg" width="55%"><br>
                 <h1 class="title is-3">SocialPay</h1>
                 <br />
                 <h2 class="subtitle">
