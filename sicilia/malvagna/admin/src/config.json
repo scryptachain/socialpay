@@ -1,0 +1,12 @@
+{
+    "name": "socialpay-malvagna",
+    "header": "SocialPay | Comune di Malvagna",
+    "sidechain": "6bVjLx8WK1N3Ug1t76fQswNSrTS9AJdD1S",
+    "logo": "logo.png",
+    "lettering": "lettering.png",
+    "completo": "completo.jpg",
+    "fees": 0,
+    "firma": "Comune di Malvagna",
+    "email": "protocollo@comune.malvagna.me.it",
+    "numero": "+39 366 18 90 592"
+}
