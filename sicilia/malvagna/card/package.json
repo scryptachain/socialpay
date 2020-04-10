@@ -1,5 +1,5 @@
 {
-  "name": "scrypta-card-generator",
+  "name": "scrypta-card-malvagna",
   "version": "1.0.0",
   "description": "Generate -n- Scrypta Cards and saves it in csv",
   "main": "index.js",
