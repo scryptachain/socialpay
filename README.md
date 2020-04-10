@@ -26,6 +26,8 @@ Si consiglia di scaricare le cartelle di base aggiornate dal branch di svilppo: 
 
 Dopo aver scaricato le cartelle si dovrà installare tutte le dipendenze attraverso il comando `npm install` all'interno di ogni sottocartella (`admin`, `card`, `pos`).
 
+## Creazione della sidechain
+
 La creazione della rappresentazione digitale di valore avviene attraverso la tecnologia Sidechain di Planum. Ci sono quindi delle operazioni preliminari da effettuare prima di poter iniziare a compilare i progetti:
 
 1) Vai su https://web.manent.app e crea un nuovo account Scrypta, inserisci una password forte, perchè questo account sarà l'account proprietario della sidechain. Effettua il backup del file .sid e del paper wallet per sicurezza, custodisci questi file gelosamente e offline.
