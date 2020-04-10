@@ -16,7 +16,15 @@ Una cartella generica chiamata `documentazione` contiene tutte le presentazioni,
 Se vuoi contribuire al progetto puoi creare, in accordo con la volontà comunale, una copia del progetto e richiedere l'inserimento del codice tramite Pull Request.
 All'interno delle cartelle troverai un file `config.json` che ti permette di configurare i parametri di base. Questi comprendono principalmente le modifiche grafiche, di titoli e, chiaramente, permettono di collegare la sidechain tramite indrizzo univoco.
 
+Si consiglia di forkare questo progetto e aggiungere il proprio comune così da darne evidenza a tutti i contributori del progetto. Qualora non trovassi la cartella della tua regione, dovrai crearla tu stesso.
+
+Alla fine del processo di aggiunta e creazione del progetto per il tuo comune potrai richiedere l'aggiunta nel repository ufficiale tramite pull request.
+
 ## Operazioni preliminari per impostare il progetto
+
+Si consiglia di scaricare le cartelle di base aggiornate dal branch di svilppo: https://github.com/scryptachain/socialpay/tree/development
+
+Dopo aver scaricato le cartelle si dovrà installare tutte le dipendenze attraverso il comando `npm install` all'interno di ogni sottocartella (`admin`, `card`, `pos`).
 
 La creazione della rappresentazione digitale di valore avviene attraverso la tecnologia Sidechain di Planum. Ci sono quindi delle operazioni preliminari da effettuare prima di poter iniziare a compilare i progetti:
 
