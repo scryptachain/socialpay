@@ -51,6 +51,19 @@
       </section>
     </div>
     <b-loading :is-full-page="true" :active.sync="isLogging" :can-cancel="false"></b-loading>
+    <div v-if="updateExists" class="fullscreen">
+      <div style="padding:30vh 30px; text-align:center">
+        <h1 class="is-title is-1">Attenzione</h1>
+        C'è un aggiornamento dell'applicativo,
+        si prega di cliccare il pulsante sottostante per proseguire.<br><br>
+        <b-button
+          type="is-success"
+          v-on:click="refreshApp"
+        >
+          Clicca qui per aggiornare
+        </b-button>
+      </div>
+    </div>
     <hr>
     <div style="padding:0 10px">
       SocialPay è un progetto
@@ -75,8 +88,19 @@ export default {
       wallet: "",
       config: config,
       isLogging: true,
-      showScanModal: false
+      showScanModal: false,
+      refreshing: false,
+      registration: null,
+      updateExists: false
     };
+  },
+  created () {
+    document.addEventListener('swUpdated', this.showRefreshUI, { once: true });
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (this.refreshing) return;
+      this.refreshing = true;
+      window.location.reload();
+    })
   },
   async mounted() {
     const app = this;
@@ -93,6 +117,15 @@ export default {
     }
   },
   methods: {
+    showRefreshUI (e) {
+      this.registration = e.detail;
+      this.updateExists = true;
+    },
+    refreshApp () {
+      this.updateExists = false;
+      if (!this.registration || !this.registration.waiting) { return; }
+      this.registration.waiting.postMessage('skipWaiting');
+    },
     hideScanModal() {
       const app = this
       app.showScanModal = false
