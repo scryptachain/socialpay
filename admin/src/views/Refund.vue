@@ -123,8 +123,10 @@ export default {
     app.parsedUsers[app.user.identity.address] = 'AMMINISTRATORE'
     for(let x in app.users){
       let uu = app.users[x]
-      if(uu.name !== '' && uu.filter === 'ESERCENTE'){
-        app.parsedUsers[uu.address] = uu.name 
+      if(uu.name !== ''){
+        if(uu.filter === 'FARMACIA' || uu.filter === 'ESERCENTE'){
+          app.parsedUsers[uu.address] = uu.name 
+        }
       }
     }
     let response = await app.scrypta.post('/sidechain/scan', { sidechain_address: app.user.chain })
