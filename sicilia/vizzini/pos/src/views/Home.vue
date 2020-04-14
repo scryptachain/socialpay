@@ -1,15 +1,7 @@
 <template>
   <div class="home">
     <div v-if="!showScan && !showWaiting && !showUnlock && !showSuccess">
-      <div v-if="chain === 'main' && focus === 'lyra'" v-on:click="fixInputs('lyra')" class="display-number">
-        {{ amountLyra }}
-        <span style="position:absolute; top: 10px; right:10px;">LYRA</span>
-      </div>
-      <div v-if="chain === 'main' && focus === 'fiat'" v-on:click="fixInputs('fiat')" class="display-number">
-        {{ amountFIAT }}
-        <span style="position:absolute; top: 10px; right:10px;">{{ currency.toUpperCase() }}</span>
-      </div>
-      <div v-if="chain !== 'main'" v-on:click="fixInputs('sidechain')" class="display-number">
+      <div class="display-number">
         {{ amountSidechain }}
         <span style="position:absolute; top: 5px; right:10px;">{{ ticker }}</span>
       </div>
@@ -68,9 +60,10 @@
         <div v-on:click='removePin()' class="pos-btn">L</div>
         <div v-on:click='addPin(0)' class="pos-btn">0</div>
         <div v-on:click='cleanPin()' class="pos-btn">C</div>
-        <div style="padding:5px 10px">
+        <div style="padding:5px 10px" v-if="!isPaying">
           <b-button type="is-success" v-on:click="payWithGuestWallet()" size="is-large">CONFERMA</b-button>
         </div>
+        <div style="padding:5px 10px" v-if="isPaying">Invio, si prega di attendere..</div>
     </div>
   </div>
 </template>
@@ -99,6 +92,7 @@ export default {
       showScan: false,
       showSuccess: false,
       showWaiting: false,
+      isPaying: false,
       showUnlock: false,
       isWaiting: false,
       payment: {},
@@ -405,20 +399,9 @@ export default {
       app.showScan = false
       app.guestwallet = decodedString
       let exp = app.guestwallet.split(':')
-      let canPay = false
-      if(app.chain === 'main'){
-        let balance = await app.scrypta.get('/balance/' + exp[0])
-        if(balance.balance > app.amountLyra){
-          canPay = true
-        }
-      }
-      if(app.chain !== 'main'){
-        let balance = await app.scrypta.post('/sidechain/balance', { dapp_address: exp[0], sidechain_address: app.chain})
-        if(balance.balance > app.amountSidechain){
-          canPay = true
-        }
-      }
-      if(canPay){
+      let balance = await app.scrypta.post('/sidechain/balance', { dapp_address: exp[0], sidechain_address: app.chain})
+      
+      if(balance.balance >= app.amountSidechain){
         app.showUnlock = true
       }else{
         app.$buefy.toast.open({
@@ -436,7 +419,8 @@ export default {
       let guestpub = exp[0]
       if(app.guestpin.length > 0){
         let key = await app.scrypta.readKey(app.guestpin, app.guestwallet)
-        if(key !== false){
+        if(key !== false && app.isPaying === false){
+          app.isPaying = true
           let sendsuccess = false
           let yy = 0
           let valid = false
@@ -463,7 +447,10 @@ export default {
             app.guestpin = ''
             app.showUnlock = false
             app.showSuccess = true
+            app.isPaying = false
+            app.hidePaymnent()
           }else{
+            app.isPaying = false
             app.$buefy.toast.open({
               duration: 5000,
               message: `Invio non riuscito si prega di riprovare.`,
