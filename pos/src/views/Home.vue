@@ -405,20 +405,9 @@ export default {
       app.showScan = false
       app.guestwallet = decodedString
       let exp = app.guestwallet.split(':')
-      let canPay = false
-      if(app.chain === 'main'){
-        let balance = await app.scrypta.get('/balance/' + exp[0])
-        if(balance.balance > app.amountLyra){
-          canPay = true
-        }
-      }
-      if(app.chain !== 'main'){
-        let balance = await app.scrypta.post('/sidechain/balance', { dapp_address: exp[0], sidechain_address: app.chain})
-        if(balance.balance > app.amountSidechain){
-          canPay = true
-        }
-      }
-      if(canPay){
+      let balance = await app.scrypta.post('/sidechain/balance', { dapp_address: exp[0], sidechain_address: app.chain})
+      
+      if(balance.balance >= app.amountSidechain){
         app.showUnlock = true
       }else{
         app.$buefy.toast.open({
