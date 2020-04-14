@@ -1,15 +1,7 @@
 <template>
   <div class="home">
     <div v-if="!showScan && !showWaiting && !showUnlock && !showSuccess">
-      <div v-if="chain === 'main' && focus === 'lyra'" v-on:click="fixInputs('lyra')" class="display-number">
-        {{ amountLyra }}
-        <span style="position:absolute; top: 10px; right:10px;">LYRA</span>
-      </div>
-      <div v-if="chain === 'main' && focus === 'fiat'" v-on:click="fixInputs('fiat')" class="display-number">
-        {{ amountFIAT }}
-        <span style="position:absolute; top: 10px; right:10px;">{{ currency.toUpperCase() }}</span>
-      </div>
-      <div v-if="chain !== 'main'" v-on:click="fixInputs('sidechain')" class="display-number">
+      <div class="display-number">
         {{ amountSidechain }}
         <span style="position:absolute; top: 5px; right:10px;">{{ ticker }}</span>
       </div>
