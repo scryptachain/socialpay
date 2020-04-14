@@ -1,7 +1,0 @@
-db/
-node_modules/
-prints/*.pdf
-db/*.json
-out.csv
-import.csv
-package-lock.json
