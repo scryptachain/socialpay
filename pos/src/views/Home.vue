@@ -60,9 +60,10 @@
         <div v-on:click='removePin()' class="pos-btn">L</div>
         <div v-on:click='addPin(0)' class="pos-btn">0</div>
         <div v-on:click='cleanPin()' class="pos-btn">C</div>
-        <div style="padding:5px 10px">
+        <div style="padding:5px 10px" v-if="!isPaying">
           <b-button type="is-success" v-on:click="payWithGuestWallet()" size="is-large">CONFERMA</b-button>
         </div>
+        <div style="padding:5px 10px" v-if="isPaying">Invio, si prega di attendere..</div>
     </div>
   </div>
 </template>
@@ -91,6 +92,7 @@ export default {
       showScan: false,
       showSuccess: false,
       showWaiting: false,
+      isPaying: false,
       showUnlock: false,
       isWaiting: false,
       payment: {},
@@ -417,7 +419,8 @@ export default {
       let guestpub = exp[0]
       if(app.guestpin.length > 0){
         let key = await app.scrypta.readKey(app.guestpin, app.guestwallet)
-        if(key !== false){
+        if(key !== false && app.isPaying === false){
+          app.isPaying = true
           let sendsuccess = false
           let yy = 0
           let valid = false
@@ -444,7 +447,10 @@ export default {
             app.guestpin = ''
             app.showUnlock = false
             app.showSuccess = true
+            app.isPaying = false
+            app.hidePaymnent()
           }else{
+            app.isPaying = false
             app.$buefy.toast.open({
               duration: 5000,
               message: `Invio non riuscito si prega di riprovare.`,
