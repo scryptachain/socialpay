@@ -209,21 +209,6 @@ export default {
           block = 'unconfirmed'
         }
 
-        // STATS
-        
-        if(to !== app.user.chain){
-          if(to !== app.user.identity.address){
-            app.circularSupply += value
-            if(app.activeUsers.indexOf(to) === -1 && app.parsedUsers[to] !== undefined){
-              app.activeUsers.push(to)
-            }
-            if(app.totalUsers.indexOf(to) === -1){
-              app.totalUsers.push(to)
-            }
-          }
-        }else{
-          app.burnedSupply += value
-        }
         let transaction = {
           sxid: response.data[x].sxid,
           amount: value,
@@ -257,11 +242,14 @@ export default {
         transactions.push(transaction)
       }
     }
-    app.circularSupply = app.circularSupply.toFixed(app.user.owner[app.user.chain].genesis.decimals)
-    app.burnedSupply = app.burnedSupply.toFixed(app.user.owner[app.user.chain].genesis.decimals)
     let shares = await app.scrypta.post('/sidechain/shares', { sidechain_address: app.user.chain })
     app.totalSupply = parseFloat(shares.cap.toFixed(app.user.owner[app.user.chain].genesis.decimals)) - parseFloat(app.burnedSupply)
     app.totalSupply = app.totalSupply.toFixed(app.user.owner[app.user.chain].genesis.decimals)
+    app.totalUsers = Object.keys(shares.shares).length - 2
+    app.circularSupply = app.totalSupply - shares.shares[app.user.chain].balance - shares.shares[app.user.identity.address].balance
+    app.burnedSupply = shares.shares[app.user.chain].balance
+    app.burnedSupply = parseFloat(app.burnedSupply).toFixed(app.user.owner[app.user.chain].genesis.decimals)
+    app.circularSupply = parseFloat(app.circularSupply).toFixed(app.user.owner[app.user.chain].genesis.decimals)
     app.transactions = transactions
   },
   methods: {
