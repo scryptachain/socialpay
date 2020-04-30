@@ -390,7 +390,7 @@
             let key = await app.scrypta.readKey(password, app.user.sid);
             if (key !== false) {
               // PRELEVO ASSET
-              let amountAssetFixed = parseFloat(parseFloat(app.amountAsset).toFixed(app.owner.owner[app.owner.chain].genesis.decimals))
+              let amountAssetFixed = parseFloat(parseFloat(app.amountWithdraw).toFixed(app.owner.owner[app.owner.chain].genesis.decimals))
               if(amountAssetFixed > 0){
                 let userBalance = await app.scrypta.post('/sidechain/balance', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
                 if(userBalance.balance >= amountAssetFixed){
@@ -399,7 +399,7 @@
                   let yy = 0
                   while(sendsuccess === false){
                     let send = await app.scrypta.post('/sidechain/send',{
-                        from: app.owner.identity.address, 
+                        from: app.user.address, 
                         sidechain_address: app.owner.chain,
                         private_key: key.prv,
                         pubkey: key.key,
