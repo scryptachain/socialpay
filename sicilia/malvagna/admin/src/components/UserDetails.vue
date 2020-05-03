@@ -36,7 +36,8 @@
                           required>
                       </b-input>
                   </b-field>
-                  <button class="button is-primary" v-on:click="sendAssetToUser">INVIA ORA</button>
+                  <button class="button is-primary" v-if="!isSending" v-on:click="sendAssetToUser">INVIA ORA</button>
+                  <div v-if="isSending">Invio in corso...</div>
                 </b-tab-item>
                 <b-tab-item label="Preleva fondi">
                   <h1>Preleva fondi</h1>
@@ -47,7 +48,8 @@
                           required>
                       </b-input>
                   </b-field>
-                  <button class="button is-primary" v-on:click="withdrawAssetFromUser">PRELEVA ORA</button><br><br>
+                  <button class="button is-primary" v-if="!isSending" v-on:click="withdrawAssetFromUser">PRELEVA ORA</button>
+                  <div v-if="isSending">Invio in corso...</div><br><br>
                   <span style="color:#f00">
                     Attenzione, verrà richiesto di inserire il PIN della card associata e non quello dell'utente amministratore. 
                     I fondi verranno inviati all'indirizzo dell'utente amministratore e saranno disponibili al primo blocco successivo.
@@ -146,6 +148,7 @@
         amountLyra: 0.1,
         amountAsset: 0,
         totRimborsi: 0,
+        isSending: false,
         transactions: [],
         refunds: [],
         users: [],
@@ -272,6 +275,7 @@
             let key = await app.scrypta.readKey(password, app.owner.identity.wallet);
             if (key !== false) {
               // INVIO LYRA
+              app.isSending = true
               let amountLyraFixed = parseFloat(parseFloat(app.amountLyra).toFixed(8))
               if(amountLyraFixed > 0){
                 let ownerBalance = await app.scrypta.get('/balance/' + app.owner.identity.address)
@@ -280,13 +284,8 @@
                   let valid = false
                   let yy = 0
                   while(sendsuccess === false){
-                    let send = await app.scrypta.post('/send',{
-                      from: app.owner.identity.address,
-                      to: app.user.address,
-                      amount: amountLyraFixed,
-                      private_key: key.prv
-                    })
-                    if(send.data.txid !== undefined && send.data.txid !== null && send.data.txid.length === 64){
+                    let txid = await app.scrypta.send(app.owner.identity.wallet, password, app.user.address, amountLyraFixed)
+                    if(txid !== undefined && txid !== null && txid.length === 64){
                       sendsuccess = true
                       valid = true
                     }
@@ -325,15 +324,9 @@
                   let valid = false
                   let yy = 0
                   while(sendsuccess === false){
-                    let send = await app.scrypta.post('/sidechain/send',{
-                        from: app.owner.identity.address, 
-                        sidechain_address: app.owner.chain,
-                        private_key: key.prv,
-                        pubkey: key.key,
-                        to: app.user.address,
-                        amount: amountAssetFixed
-                    })
-                    if(send.uuid !== undefined && send.txs.length === 1 && send.txs[0].length === 64){
+                    app.scrypta.usePlanum(app.owner.chain)
+                    let send = await app.scrypta.sendPlanumAsset(app.owner.identity.wallet, password, app.user.address, amountAssetFixed)
+                    if(send !== false){
                       sendsuccess = true
                       valid = true
                     }
@@ -355,11 +348,13 @@
                       type: "is-danger"
                     })
                   }
+                  app.isSending = false
                 }else{
                   app.$buefy.toast.open({
                     message: "Non hai abbastanza fondi!",
                     type: "is-danger"
                   });
+                  app.isSending = false
                 }
               }
             } else {
@@ -392,21 +387,16 @@
               // PRELEVO ASSET
               let amountAssetFixed = parseFloat(parseFloat(app.amountWithdraw).toFixed(app.owner.owner[app.owner.chain].genesis.decimals))
               if(amountAssetFixed > 0){
+                app.isSending = true
                 let userBalance = await app.scrypta.post('/sidechain/balance', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
                 if(userBalance.balance >= amountAssetFixed){
                   let sendsuccess = false
                   let valid = false
                   let yy = 0
                   while(sendsuccess === false){
-                    let send = await app.scrypta.post('/sidechain/send',{
-                        from: app.user.address, 
-                        sidechain_address: app.owner.chain,
-                        private_key: key.prv,
-                        pubkey: key.key,
-                        to: app.owner.identity.address,
-                        amount: amountAssetFixed
-                    })
-                    if(send.uuid !== undefined && send.txs.length === 1 && send.txs[0].length === 64){
+                    app.scrypta.usePlanum(app.owner.chain)
+                    let send = await app.scrypta.sendPlanumAsset(app.user.sid, password, app.owner.identity.address, amountAssetFixed)
+                    if(send !== false){
                       sendsuccess = true
                       valid = true
                     }
@@ -416,6 +406,7 @@
                     }
                     yy++
                   }
+                  app.isSending = false
                   if(valid){
                     app.amountAsset = 0
                     app.$buefy.toast.open({
