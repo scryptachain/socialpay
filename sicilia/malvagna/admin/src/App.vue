@@ -123,11 +123,13 @@ export default {
       try {
         app.isConnecting = true
         let node = await app.scrypta.returnFirstNode()
-        let check = await app.axios.get(node + '/wallet/getinfo')
-        if(check.data.blocks !== undefined){
-          app.isConnected = true
-        }else{
-          app.isConnected = false
+        if(node !== false){
+          let check = await app.axios.get(node + '/wallet/getinfo')
+          if(check.data.blocks !== undefined){
+            app.isConnected = true
+          }else{
+            app.isConnected = false
+          }
         }
         app.isConnecting = false
       }catch(e){
