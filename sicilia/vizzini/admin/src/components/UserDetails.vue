@@ -202,66 +202,73 @@
     async mounted() {
       const app = this
       app.owner = await User.auth()
-      let assetBalance = await app.scrypta.post('/sidechain/balance', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
-      app.assetBalance = assetBalance.balance
-      let lyraBalance = await app.scrypta.get('/balance/' + app.user.address)
-      app.lyraBalance = lyraBalance.balance
+      app.fetchUserDetails()
+      setInterval(function(){
+        app.fetchUserDetails()
+      },15000)
+    },
+    methods: {
+      async fetchUserDetails(){
+        const app = this
+        let assetBalance = await app.scrypta.post('/sidechain/balance', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
+        app.assetBalance = assetBalance.balance
+        let lyraBalance = await app.scrypta.get('/balance/' + app.user.address)
+        app.lyraBalance = lyraBalance.balance
 
-      app.users = await app.db.get('users')
-      app.parsedUsers[app.owner.identity.address] = 'AMMINISTRATORE'
-      for(let x in app.users){
-        let uu = app.users[x]
-        if(uu.name !== ''){
-          app.parsedUsers[uu.address] = uu.name 
-        }else{
-          app.parsedUsers[uu.address] = uu.address 
+        app.users = await app.db.get('users')
+        app.parsedUsers[app.owner.identity.address] = 'AMMINISTRATORE'
+        for(let x in app.users){
+          let uu = app.users[x]
+          if(uu.name !== ''){
+            app.parsedUsers[uu.address] = uu.name 
+          }else{
+            app.parsedUsers[uu.address] = uu.address 
+          }
         }
-      }
-      let refundrequests = {}
-      let transactions = await app.scrypta.post('/sidechain/transactions', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
-      app.transactions = transactions.transactions
-      for(let x in app.transactions){
-        if(app.parsedUsers[app.transactions[x].from] !== undefined && app.parsedUsers[app.transactions[x].from] !== app.transactions[x].from){
-          app.transactions[x].from = app.parsedUsers[app.transactions[x].from]
+        let refundrequests = {}
+        let transactions = await app.scrypta.post('/sidechain/transactions', { dapp_address: app.user.address, sidechain_address: app.owner.chain })
+        app.transactions = transactions.transactions
+        for(let x in app.transactions){
+          if(app.parsedUsers[app.transactions[x].from] !== undefined && app.parsedUsers[app.transactions[x].from] !== app.transactions[x].from){
+            app.transactions[x].from = app.parsedUsers[app.transactions[x].from]
+          }
+          if(app.parsedUsers[app.transactions[x].to] !== undefined && app.parsedUsers[app.transactions[x].to] !== app.transactions[x].to){
+            app.transactions[x].to = app.parsedUsers[app.transactions[x].to]
+          }
+          if(app.transactions[x].to === app.owner.chain){
+            app.transactions[x].to = 'RICHIESTA RIMBORSO'
+          }
+          refundrequests[app.transactions[x].sxid] = app.transactions[x].amount
         }
-        if(app.parsedUsers[app.transactions[x].to] !== undefined && app.parsedUsers[app.transactions[x].to] !== app.transactions[x].to){
-          app.transactions[x].to = app.parsedUsers[app.transactions[x].to]
-        }
-        if(app.transactions[x].to === app.owner.chain){
-          app.transactions[x].to = 'RICHIESTA RIMBORSO'
-        }
-        refundrequests[app.transactions[x].sxid] = app.transactions[x].amount
-      }
 
-      let received = await app.scrypta.post('/received', { address: app.user.address })
-      for(let x in received.data){
-        let tx = received.data[x]
-        let data = tx.data.split(':')
-        if(data[0] === 'REFUND'){
-          let rimborso = tx
-          let transactions = await app.scrypta.get('/transactions/' + app.owner.identity.address)
-          for(let y in transactions.data){
-            let txx = transactions.data[y]
-            if(txx.txid === tx.txid){
-              var date = new Date(txx.time * 1000)
-              var year = date.getFullYear()
-              var month = date.getMonth() + 1
-              var day = date.getDate()
-              var hours = date.getHours()
-              var minutes = "0" + date.getMinutes()
-              var formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
-              rimborso.data = formattedTime
-              rimborso.note = LZUTF8.decompress(data[2], { inputEncoding: 'Base64' })
-              rimborso.importo = refundrequests[data[1]] * -1 
-              app.totRimborsi += rimborso.importo
-              rimborso.importo = rimborso.importo + " EUR"
-              app.refunds.push(rimborso)
+        let received = await app.scrypta.post('/received', { address: app.user.address })
+        for(let x in received.data){
+          let tx = received.data[x]
+          let data = tx.data.split(':')
+          if(data[0] === 'REFUND'){
+            let rimborso = tx
+            let transactions = await app.scrypta.get('/transactions/' + app.owner.identity.address)
+            for(let y in transactions.data){
+              let txx = transactions.data[y]
+              if(txx.txid === tx.txid){
+                var date = new Date(txx.time * 1000)
+                var year = date.getFullYear()
+                var month = date.getMonth() + 1
+                var day = date.getDate()
+                var hours = date.getHours()
+                var minutes = "0" + date.getMinutes()
+                var formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
+                rimborso.data = formattedTime
+                rimborso.note = LZUTF8.decompress(data[2], { inputEncoding: 'Base64' })
+                rimborso.importo = refundrequests[data[1]] * -1 
+                app.totRimborsi += rimborso.importo
+                rimborso.importo = rimborso.importo + " EUR"
+                app.refunds.push(rimborso)
+              }
             }
           }
         }
-      }
-    },
-    methods: {
+      },
       async sendAssetToUser(){
         const app = this
         if(app.amountLyra > 0 || app.amountAsset > 0){
@@ -408,7 +415,7 @@
                   }
                   app.isSending = false
                   if(valid){
-                    app.amountAsset = 0
+                    app.amountWithdraw = 0
                     app.$buefy.toast.open({
                       message: "Asset inviati correttamente",
                       type: "is-success"
