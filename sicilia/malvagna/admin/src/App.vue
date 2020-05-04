@@ -1,56 +1,64 @@
 <template>
   <div id="app">
     <vue-headful :title="config.header" />
-    <div v-if="wallet && userIsOnline">
-      <b-navbar>
-          <template slot="brand">
-            <b-navbar-item v-on:click="navigate('home')">
-              <img :src="'/' + config.logo" />
-              <img :src="'/' + config.lettering" style="height:12px; margin-left: 10px;" />
-            </b-navbar-item>
-          </template>
-          <template slot="start">
-            <b-navbar-item v-on:click="navigate('users')">Gestione utenti</b-navbar-item>
-            <b-navbar-item v-on:click="navigate('history')">Storico transazioni</b-navbar-item>
-            <b-navbar-item v-on:click="navigate('refund')">Gestione rimborsi</b-navbar-item>
-            <b-navbar-item v-on:click="navigate('settings')">Impostazioni</b-navbar-item>
-          </template>
+    <div v-if="isConnected">
+      <div v-if="wallet">
+        <b-navbar>
+            <template slot="brand">
+              <b-navbar-item v-on:click="navigate('home')">
+                <img :src="'/' + config.logo" />
+                <img :src="'/' + config.lettering" style="height:12px; margin-left: 10px;" />
+              </b-navbar-item>
+            </template>
+            <template slot="start">
+              <b-navbar-item v-on:click="navigate('users')">Gestione utenti</b-navbar-item>
+              <b-navbar-item v-on:click="navigate('history')">Storico transazioni</b-navbar-item>
+              <b-navbar-item v-on:click="navigate('refund')">Gestione rimborsi</b-navbar-item>
+              <b-navbar-item v-on:click="navigate('settings')">Impostazioni</b-navbar-item>
+            </template>
 
-          <template slot="end">
-            <b-navbar-item tag="div">
-              <div class="buttons">
-                <a v-on:click="logout" class="button is-primary">
-                  <strong>Logout</strong>
-                </a>
+            <template slot="end">
+              <b-navbar-item tag="div">
+                <div class="buttons">
+                  <a v-on:click="logout" class="button is-primary">
+                    <strong>Logout</strong>
+                  </a>
+                </div>
+              </b-navbar-item>
+            </template>
+          </b-navbar>
+          <home v-if="route==='home'" />
+          <users v-if="route==='users'" />
+          <history v-if="route==='history'" />
+          <settings v-if="route==='settings'" />
+          <refund v-if="route==='refund'" />
+      </div>
+      <div class="container" v-if="!wallet">
+        <div class="text-center" style="margin-top:10vh">
+          <img :src="'/' + config.completo" width="15%" /><br><br>
+          <h1>Effettua il login con l'account proprietario.</h1><br>
+          <b-upload v-model="file" v-on:input="loadWalletFromFile" v-if="!isLogging" drag-drop>
+            <section class="section">
+              <div class="content has-text-centered">
+                <p>Trascina il tuo file .sid qui o clicca per caricare.</p>
               </div>
-            </b-navbar-item>
-          </template>
-        </b-navbar>
-        <home v-if="route==='home'" />
-        <users v-if="route==='users'" />
-        <history v-if="route==='history'" />
-        <settings v-if="route==='settings'" />
-        <refund v-if="route==='refund'" />
-    </div>
-    <div class="container" v-if="!wallet && userIsOnline">
-      <div class="text-center" style="margin-top:10vh">
-        <img :src="'/' + config.completo" width="15%" /><br><br>
-        <h1>Effettua il login con l'account proprietario.</h1><br>
-        <b-upload v-model="file" v-on:input="loadWalletFromFile" v-if="!isLogging" drag-drop>
-          <section class="section">
-            <div class="content has-text-centered">
-              <p>Trascina il tuo file .sid qui o clicca per caricare.</p>
-            </div>
-          </section>
-        </b-upload>
-        <div v-if="isLogging">
-          Login in corso...
+            </section>
+          </b-upload>
+          <div v-if="isLogging">
+            Login in corso...
+          </div>
         </div>
       </div>
     </div>
-    <div v-if="!userIsOnline" style="padding: 25vh; text-align:center">
-      <img :src="'/' + config.completo" width="15%" /><br><br>
-      <h1>Collegarsi a internet prima di continuare.</h1>
+    <div v-if="!isConnected" style="text-align:center; padding:40vh 5vh;">
+      <div v-if="!isConnecting">
+        <h1>Ops, nessuna connessione a internet disponibile!</h1>
+        Si prega di connettere il computer a internet e riprovare.
+      </div>
+      <div v-if="isConnecting">
+        <h1>Tento di stabilire una connessione con la blockchain.</h1>
+        Si prega di attendere la connessione e verificare che sia presente internet nel dispositivo.
+      </div>
     </div>
     <div class="text-center">
       <hr>
@@ -69,42 +77,63 @@
 <script>
 let ScryptaCore = require("@scrypta/core")
 let config = require('./config.json')
+let axios = require('axios')
 
 export default {
   data() {
     return {
       scrypta: new ScryptaCore(true),
       address: "",
-      userIsOnline: false,
       wallet: "",
       route: 'home',
       isLogging: false,
       file: [],
       isCreating: false,
-      config: config
+      isConnected: false,
+      isConnecting: true,
+      config: config,
+      axios: axios
     };
   },
   async mounted() {
     const app = this;
-    app.isOnline(async function(){
-      app.userIsOnline = true
-      app.wallet = await app.scrypta.importBrowserSID();
-      app.wallet = await app.scrypta.returnDefaultIdentity();
-      if (app.wallet.length > 0) {
-        let SIDS = app.wallet.split(":");
-        app.address = SIDS[0];
-        let identity = await app.scrypta.returnIdentity(app.address);
-        app.wallet = identity;
-        app.isLogging = false;
-      } else {
-        app.isLogging = false;
-      }
-    })
+    app.check_online_status()
+    app.wallet = await app.scrypta.importBrowserSID();
+    app.wallet = await app.scrypta.returnDefaultIdentity();
+    if (app.wallet.length > 0) {
+      let SIDS = app.wallet.split(":");
+      app.address = SIDS[0];
+      let identity = await app.scrypta.returnIdentity(app.address);
+      app.wallet = identity;
+      app.isLogging = false;
+    } else {
+      app.isLogging = false;
+    }
+    setInterval(function(){
+      app.check_online_status()
+    }, 5000)
   },
   methods: {
     navigate(page){
       const app = this
       app.route = page
+    },
+    async check_online_status() {
+      const app = this
+      try {
+        app.isConnecting = true
+        let node = await app.scrypta.returnFirstNode()
+        let check = await app.axios.get(node + '/wallet/getinfo')
+        if(check.data.blocks !== undefined){
+          app.isConnected = true
+        }else{
+          app.isConnected = false
+        }
+        app.isConnecting = false
+      }catch(e){
+        app.isConnected = false
+        app.isConnecting = false
+      }
     },
     loadWalletFromFile() {
       const app = this;
@@ -152,39 +181,7 @@ export default {
     logout() {
       localStorage.setItem("SID", "");
       location.reload();
-    },
-    isOnline(user_callback){
-      var message = function(){
-          const {dialog} = require('electron').remote;
-
-          return dialog.showMessageBox({
-              title:"Non c'è internet!",
-              message:"Il software necessita di Internet, collegarsi e riprovare.",
-              type:'warning',
-              buttons:["Riprova","Ignora"],
-              defaultId: 0
-          },function(index){
-              // if clicked "Try again please"
-              if(index == 0){
-                  execute();
-              }
-          })
-      };
-
-      var execute = function(){
-          if(navigator.onLine){
-              // Execute action if internet available.
-              user_callback();
-          }else{
-              // Show warning to user
-              // And "retry" to connect
-              message();
-          }
-      };
-
-      // Verify for first time
-      execute();
-  }
+    }
   }
 };
 </script>
