@@ -383,7 +383,7 @@ export default {
                 }
               }
             }
-          } //TODO: MAIN CHAIN
+          }
         },5000)
       }else{
         this.$buefy.toast.open({
@@ -415,8 +415,6 @@ export default {
     },
     async payWithGuestWallet(){
       const app = this
-      let exp = app.guestwallet.split(':')
-      let guestpub = exp[0]
       if(app.guestpin.length > 0){
         let key = await app.scrypta.readKey(app.guestpin, app.guestwallet)
         if(key !== false && app.isPaying === false){
@@ -425,15 +423,9 @@ export default {
           let yy = 0
           let valid = false
           while(sendsuccess === false){
-            let send = await app.scrypta.post('/sidechain/send',{
-                from: guestpub, 
-                sidechain_address: app.chain,
-                private_key: key.prv,
-                pubkey: key.key,
-                to: app.address,
-                amount: app.amountSidechain
-            })
-            if(send.uuid !== undefined && send.txs.length === 1 && send.txs[0].length === 64){
+            app.scrypta.usePlanum(app.chain)
+            let send = await app.scrypta.sendPlanumAsset(app.guestwallet, app.guestpin, app.address, app.amountSidechain)
+            if(send !== false){
               sendsuccess = true
               valid = true
             }
