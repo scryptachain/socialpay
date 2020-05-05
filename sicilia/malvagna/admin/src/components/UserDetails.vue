@@ -113,8 +113,8 @@
                     {{ props.row.sxid }}
                 </b-table-column>
 
-                <b-table-column label="Blocco" sortable>
-                    {{ props.row.block }}
+                <b-table-column label="Data" sortable>
+                    {{ props.row.data }}
                 </b-table-column>
             </template>
           </b-table>

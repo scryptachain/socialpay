@@ -40,8 +40,8 @@
                     {{ props.row.sxid.substr(0,4) }}...{{ props.row.sxid.substr(-4) }}
                 </b-table-column>
 
-                <b-table-column label="Blocco" sortable>
-                    {{ props.row.block }}
+                <b-table-column label="Data" sortable>
+                    {{ props.row.data }}
                 </b-table-column>
                 
                 <b-table-column width="90" style="text-align: center" label="Rimborsato" sortable>
@@ -98,7 +98,7 @@ export default {
       currentPage: 1,
       perPage: 15,
       transactions: [],
-      fields: ['sxid', 'from', 'to', 'amount', 'block'],
+      fields: ['sxid', 'from', 'to', 'amount', 'data'],
       user: {
         owner: {
           '-': {
@@ -155,25 +155,26 @@ export default {
         address = from
       }
       if(from !== undefined){
-        let block
-        if(response.data[x].block > 0){
-          block = response.data[x].block
-        }else{
-          block = 'unconfirmed'
-        }
         if(to === app.user.chain && from !== 'AMMINISTRATORE' && app.parsedUsers[from] !== undefined && from !== app.user.identity.address){
           to = 'RICHIESTA DI RIMBORSO'
           from = app.parsedUsers[from]
           if(app.esercenti.indexOf(address) === -1){
             app.esercenti.push(address)
           }
+          let date = new Date(response.data[x].transaction.time)
+          let year = date.getFullYear()
+          let month = date.getMonth() + 1
+          let day = date.getDate()
+          let hours = date.getHours()
+          let minutes = "0" + date.getMinutes()
+          let formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
           let transaction = {
             sxid: response.data[x].sxid,
             amount: value,
             from: from,
             to: to,
             address: address,
-            block: block
+            data: formattedTime
           }
           transactions.push(transaction)
         }

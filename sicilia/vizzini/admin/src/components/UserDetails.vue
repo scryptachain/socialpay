@@ -59,7 +59,15 @@
             </div>
           </div>
           <hr>
-          <h1>Storico transazioni</h1>
+          <h1>
+            Storico transazioni
+            <vue-csv-downloader
+              :data="transactions"
+              :fields="fields"
+            > 
+              <b-button type="is-primary" style="float:right; margin-top:-5px;" size="is-small">SCARICA BACKUP</b-button>
+            </vue-csv-downloader>
+          </h1>
           <b-table
             v-if="transactions.length > 0"
             :data="transactions"
@@ -113,8 +121,8 @@
                     {{ props.row.sxid }}
                 </b-table-column>
 
-                <b-table-column label="Blocco" sortable>
-                    {{ props.row.block }}
+                <b-table-column label="Data" sortable>
+                    {{ props.row.data }}
                 </b-table-column>
             </template>
           </b-table>
@@ -135,8 +143,12 @@
   import User from '../libs/user.js'
   let config = require('../config.json')
   var LZUTF8 = require('lzutf8')
+  import VueCsvDownloader from 'vue-csv-downloader';
 
   export default {
+    components: {
+        VueCsvDownloader,
+    },
     name: 'UserForm',
     props: ['user'],
     data() {
@@ -148,6 +160,7 @@
         amountLyra: 0.1,
         amountAsset: 0,
         totRimborsi: 0,
+        fields: ['sxid', 'from', 'to', 'amount', 'data'],
         isSending: false,
         transactions: [],
         refunds: [],
@@ -238,6 +251,15 @@
           if(app.transactions[x].to === app.owner.chain){
             app.transactions[x].to = 'RICHIESTA RIMBORSO'
           }
+
+          let date = new Date(app.transactions[x].time)
+          let year = date.getFullYear()
+          let month = date.getMonth() + 1
+          let day = date.getDate()
+          let hours = date.getHours()
+          let minutes = "0" + date.getMinutes()
+          let formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
+          app.transactions[x].data = formattedTime
           refundrequests[app.transactions[x].sxid] = app.transactions[x].amount
         }
 
@@ -251,13 +273,13 @@
             for(let y in transactions.data){
               let txx = transactions.data[y]
               if(txx.txid === tx.txid){
-                var date = new Date(txx.time * 1000)
-                var year = date.getFullYear()
-                var month = date.getMonth() + 1
-                var day = date.getDate()
-                var hours = date.getHours()
-                var minutes = "0" + date.getMinutes()
-                var formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
+                let date = new Date(txx.time * 1000)
+                let year = date.getFullYear()
+                let month = date.getMonth() + 1
+                let day = date.getDate()
+                let hours = date.getHours()
+                let minutes = "0" + date.getMinutes()
+                let formattedTime = day + '/' + month + '/' + year +' alle ' + hours + ':' + minutes.substr(-2)
                 rimborso.data = formattedTime
                 rimborso.note = LZUTF8.decompress(data[2], { inputEncoding: 'Base64' })
                 rimborso.importo = refundrequests[data[1]] * -1 
