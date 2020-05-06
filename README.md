@@ -67,6 +67,8 @@ Le card wallet vengono create attraverso lo script NodeJS presente nella cartell
 
 Un altro file `out.csv` verrà creato e conterrà tutti i PIN necessari a sbloccare le card. Questo file dovrà essere conservato gelosamente offline e servirà per importare le anagrafiche all'interno del software di amministrazione. Per caricare le anagrafiche si dovrà eliminare la seconda colonna.
 
+Il file `import.csv` verrà generato per agevolare il processo di importazione delle anagrafiche all'interno del software.
+
 Per generare le card e il documento PIN accompagnatorio si deve modificare il file `config.json` inserendo i riferimenti necessari e dare il seguente comando ```node index.js -g=100```. Per modificare la quantità ènecessario modificare il numero `100` con la quantità desiderata. E' molto importante fare un backup della cartella `prints` e del file `out.csv` in quanto questi file vengono cancellati ad ogni nuova generazione.
 
 ## Richieste di aiuto
