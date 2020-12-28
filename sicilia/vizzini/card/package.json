@@ -18,13 +18,13 @@
   },
   "homepage": "https://github.com/scryptachain/scrypta-card-generator#readme",
   "dependencies": {
-    "@scrypta/core": "^1.5.5",
-    "axios": "^0.19.0",
-    "biguint-format": "^1.0.1",
+    "@scrypta/core": "^2.9.9",
+    "axios": "^0.21.1",
+    "biguint-format": "^1.0.2",
     "coinkey": "^3.0.0",
-    "csv-writer": "^1.5.0",
+    "csv-writer": "^1.6.0",
     "dotenv": "^8.2.0",
-    "fast-csv": "^3.4.0",
+    "fast-csv": "^4.3.6",
     "minimist": "^1.2.5",
     "pdfkit": "^0.11.0",
     "qrcode": "^1.4.4",
@@ -32,6 +32,6 @@
     "request": "^2.88.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.6"
   }
 }

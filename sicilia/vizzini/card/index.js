@@ -21,9 +21,14 @@ if(argv.g !== undefined){
     number = argv.g
 }
 
+var index = 0
+if(argv.s !== undefined){
+    index = argv.s
+    console.log('STARTING FROM ' + index)
+}
+
 var cache = []
 var addresses = []
-var index = 0
 
 async function generate(){
     var password = random(10000,99999).toFixed(0)
@@ -43,7 +48,7 @@ async function savePdf(index, sid, password){
         let exp = sid.split(':')
         let public = exp[0]
         let front = new PDFDocument({ layout: 'landscape', size: [558.66,880], margin:0}).font('Courier').fontSize(18).fillColor('#163457')
-        console.log('GENERATING PDF FOR ' + public)
+        console.log('GENERATING PDF FOR #'+index+' - ' + public)
         QRCode.toDataURL(public,{ errorCorrectionLevel: 'H', margin: 1 }, function (err, publicImage) {
             front.pipe(fs.createWriteStream('./prints/'+index+'_front.pdf'))
             front.image('./assets/front.png', 0, 0, {width: 880, height: 558.66})
@@ -79,7 +84,7 @@ async function init(){
         let check = await scrypta.readKey(address.password, address.sid)
         if(check !== false){
             addresses.push(address)
-            await savePdf(k, address.sid, address.password)
+            await savePdf(address.key, address.sid, address.password)
         }
     }
 
