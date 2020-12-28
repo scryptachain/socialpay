@@ -118,6 +118,7 @@ export default {
   },
   async mounted() {
     const app = this;
+    app.scrypta.staticnodes = true
     app.user = await User.auth()
     app.users = await app.db.get('users')
     app.parsedUsers[app.user.identity.address] = 'AMMINISTRATORE'

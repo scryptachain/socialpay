@@ -73,6 +73,7 @@ export default {
   },
   async mounted() {
     const app = this;
+    app.scrypta.staticnodes = true
     app.wallet = await app.scrypta.importBrowserSID();
     app.wallet = await app.scrypta.returnDefaultIdentity();
 

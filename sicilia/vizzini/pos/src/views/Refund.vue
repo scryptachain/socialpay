@@ -80,9 +80,9 @@ export default {
   },
   async mounted() {
     const app = this;
+    app.scrypta.staticnodes = true
     app.wallet = await app.scrypta.importBrowserSID();
     app.wallet = await app.scrypta.returnDefaultIdentity();
-
     if(app.chain !== 'main'){
       let sidechains = await app.scrypta.get('/sidechain/list')
       for(let x in sidechains.data){

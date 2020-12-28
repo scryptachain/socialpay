@@ -4,19 +4,19 @@
         <header class="modal-card-head">
           <p class="modal-card-title">
             Modifica utente<br>
-            <span style="font-size:15px">#{{ user.id }}: {{ user.address }}</span>
+            <span style="font-size:15px">#{{ updated.id }}: {{ updated.address }}</span>
           </p>
         </header>
         <section class="modal-card-body">
           <b-field label="Nome">
               <b-input
                   type="text"
-                  v-model="user.name"
+                  v-model="updated.name"
                   required>
               </b-input>
           </b-field>
           <b-field label="Tipologia">
-            <b-select placeholder="Tipologia" v-model="user.filter" required>
+            <b-select placeholder="Tipologia" v-model="updated.filter" required>
                 <option
                     v-for="option in tipologie"
                     :value="option"
@@ -28,14 +28,14 @@
           <b-field label="Identificativo">
               <b-input
                   type="text"
-                  v-model="user.identifier"
+                  v-model="updated.identifier"
                   required>
               </b-input>
           </b-field>
           <b-field label="Componenti nucleo familiare">
               <b-input
                   type="text"
-                  v-model="user.nucleo"
+                  v-model="updated.nucleo"
                   required>
               </b-input>
           </b-field>
@@ -58,13 +58,15 @@
       return {
         db: new ScryptaDB(true, ['users', 'settings']),
         scrypta: new ScryptaCore(true),
-        tipologie: ["CITTADINO", "ESERCENTE", "FARMACIA"]
+        tipologie: ["CITTADINO", "ESERCENTE", "FARMACIA"],
+        updated: {}
       }
     },
     methods: {
       async saveUser(){
         const app = this
-        await app.db.update('users','address', app.user.address,app.user)
+        app.updated = app.user
+        await app.db.update('users','address', app.updated.address,app.updated)
         app.$buefy.toast.open({
           message: "Utente aggiornato correttamente.",
           type: "is-success"
