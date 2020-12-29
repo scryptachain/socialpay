@@ -24,32 +24,32 @@
                 aria-page-label="Page"
                 aria-current-label="Current page">
 
-                <template slot-scope="props">
-                    <b-table-column field="id" label="ID" width="40" sortable numeric>
+                <template>
+                    <b-table-column field="id" label="ID" width="40" sortable numeric v-slot="props">
                         {{ props.row.id }}
                     </b-table-column>
 
-                    <b-table-column field="filter" label="Tipologia" width="40" sortable searchable>
+                    <b-table-column field="filter" label="Tipologia" width="40" sortable searchable v-slot="props">
                         {{ props.row.filter }}
                     </b-table-column>
 
-                    <b-table-column field="name" label="Nome" searchable sortable>
+                    <b-table-column field="name" label="Nome" searchable sortable v-slot="props">
                         {{ props.row.name }}
                     </b-table-column>
 
-                    <b-table-column field="address" label="Indirizzo" searchable sortable>
+                    <b-table-column field="address" label="Indirizzo" searchable sortable v-slot="props">
                         {{ props.row.address }}
                     </b-table-column>
 
-                    <b-table-column field="user.identifier" label="Identificativo" searchable sortable>
+                    <b-table-column field="user.identifier" label="Identificativo" searchable sortable v-slot="props">
                         {{ props.row.identifier }}
                     </b-table-column>
 
-                    <b-table-column field="user.nucleo" label="C. nuc. fam." searchable sortable>
+                    <b-table-column field="user.nucleo" label="C. nuc. fam." searchable sortable v-slot="props">
                         {{ props.row.nucleo }}
                     </b-table-column>
 
-                    <b-table-column width="140" label="Azioni" sortable>
+                    <b-table-column width="140" label="Azioni" sortable v-slot="props">
                       <b-button type="is-primary" v-on:click="editUser(props.row)" size="is-small">
                         <b-icon
                             pack="fas"

@@ -62,10 +62,13 @@
         updated: {}
       }
     },
+    mounted(){
+      const app = this
+      app.updated = app.user
+    },
     methods: {
       async saveUser(){
         const app = this
-        app.updated = app.user
         await app.db.update('users','address', app.updated.address,app.updated)
         app.$buefy.toast.open({
           message: "Utente aggiornato correttamente.",

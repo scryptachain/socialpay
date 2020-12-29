@@ -6,6 +6,18 @@
             Visualizza utente<br>
             <span style="font-size:15px">#{{ user.id }}: {{ user.address }}</span>
           </p>
+          <div
+            v-on:click="closeModal"
+            style="
+              position: absolute;
+              top: 34px;
+              right: 34px;
+              font-weight: bold;
+              cursor: pointer;
+            "
+          >
+            X
+          </div>
         </header>
         <section class="modal-card-body">
           <div class="columns">
@@ -85,9 +97,9 @@
             aria-page-label="Page"
             aria-current-label="Current page">
 
-            <template slot-scope="props">
+            <template>
 
-                <b-table-column field="from" label="Indirizzo di partenza" width="40" sortable searchable>
+                <b-table-column field="from" label="Indirizzo di partenza" width="40" sortable searchable v-slot="props">
                   <span v-if="props.row.from === owner.identity.address">
                     AMMINISTRATORE
                   </span>
@@ -100,7 +112,7 @@
                   </span>
                 </b-table-column>
 
-                <b-table-column field="to" label="Indirizzo di destinazione" searchable sortable>
+                <b-table-column field="to" label="Indirizzo di destinazione" searchable sortable v-slot="props">
                   <span v-if="props.row.to === owner.identity.address">
                     AMMINISTRATORE
                   </span>
@@ -113,15 +125,15 @@
                   </span>
                 </b-table-column>
 
-                <b-table-column label="Ammontare" sortable>
+                <b-table-column label="Ammontare" sortable v-slot="props">
                     {{ props.row.amount }} {{ owner.owner[owner.chain].genesis.symbol }}
                 </b-table-column>
 
-                <b-table-column field="sxid" label="Identificativo transazione" searchable sortable>
+                <b-table-column field="sxid" label="Identificativo transazione" searchable sortable v-slot="props">
                     {{ props.row.sxid }}
                 </b-table-column>
 
-                <b-table-column label="Data" sortable>
+                <b-table-column label="Data" sortable v-slot="props">
                     {{ props.row.data }}
                 </b-table-column>
             </template>
@@ -221,6 +233,9 @@
       },15000)
     },
     methods: {
+      closeModal(){
+        this.$parent.close()
+      },
       async fetchUserDetails(){
         const app = this
         let assetBalance = await app.scrypta.post('/sidechain/balance', { dapp_address: app.user.address, sidechain_address: app.owner.chain })

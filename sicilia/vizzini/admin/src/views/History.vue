@@ -22,25 +22,25 @@
             aria-page-label="Page"
             aria-current-label="Current page">
 
-            <template slot-scope="props">
+            <template>
 
-                <b-table-column field="from" label="Indirizzo di partenza" width="40" sortable searchable>
+                <b-table-column field="from" label="Indirizzo di partenza" width="40" sortable searchable v-slot="props">
                   {{ props.row.from }}
                 </b-table-column>
 
-                <b-table-column field="to" label="Indirizzo di destinazione" searchable sortable>
+                <b-table-column field="to" label="Indirizzo di destinazione" searchable sortable v-slot="props">
                   {{ props.row.to }}
                 </b-table-column>
 
-                <b-table-column label="Ammontare" sortable>
+                <b-table-column label="Ammontare" sortable v-slot="props">
                     {{ props.row.amount }} {{ user.owner[user.chain].genesis.symbol }}
                 </b-table-column>
 
-                <b-table-column field="sxid" label="Identificativo transazione" searchable sortable>
+                <b-table-column field="sxid" label="Identificativo transazione" searchable sortable v-slot="props">
                     {{ props.row.sxid.substr(0,4) }}...{{ props.row.sxid.substr(-4) }}
                 </b-table-column>
 
-                <b-table-column label="Data" sortable>
+                <b-table-column label="Data" sortable v-slot="props">
                     {{ props.row.data }}
                 </b-table-column>
             </template>
